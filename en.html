@@ -1,0 +1,1357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kayakalp Attender Training</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: a 16:9 projector stage sized with container units; below 760px it becomes a scrolling handout.
+   Sign system: ISO-style marks — blue = do, red = do not, yellow = warning, green = information. */
+:root{
+  --paper:#EEF2EF; --panel:#FFFFFF; --ink:#13222A; --ink-2:#4B5C64; --rule:#CCD6D1;
+  --brand:#0D5F52; --brand-soft:#DCEDE8; --on-strong:#FFFFFF;
+  --do:#0A5DA6; --do-soft:#E2ECF7;
+  --dont:#C2272D; --dont-soft:#FBE5E4;
+  --warn:#F2C200; --warn-soft:#FFF5CC;
+  --info:#17784C; --info-soft:#E0F1E7;
+  --bin-yellow:#F2C200; --bin-red:#C9302C; --bin-white:#FFFFFF; --bin-blue:#1D5FB4; --bin-green:#2E7D32;
+  --sign-ink:#1A1A1A;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Atkinson Hyperlegible",Verdana,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1619; --panel:#16232A; --ink:#E6EEEA; --ink-2:#A3B4AD; --rule:#2B3C44;
+    --brand:#5CC4AE; --brand-soft:#173A35; --on-strong:#0E1619;
+    --do:#5AA5EC; --do-soft:#15293C; --dont:#F06A66; --dont-soft:#3A1D1F;
+    --warn:#F2C94C; --warn-soft:#3A3215; --info:#47BC86; --info-soft:#13301F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1619; --panel:#16232A; --ink:#E6EEEA; --ink-2:#A3B4AD; --rule:#2B3C44;
+  --brand:#5CC4AE; --brand-soft:#173A35; --on-strong:#0E1619;
+  --do:#5AA5EC; --do-soft:#15293C; --dont:#F06A66; --dont-soft:#3A1D1F;
+  --warn:#F2C94C; --warn-soft:#3A3215; --info:#47BC86; --info-soft:#13301F;
+  color-scheme:dark;
+}
+html{box-sizing:border-box;height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+
+.deck{height:100%;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 0}
+.viewport{flex:1;min-height:0;container-type:size;display:grid;place-items:center}
+.stage{--u:1cqw;width:min(100cqw,calc(100cqh * 16 / 9));aspect-ratio:16/9;container-type:size;position:relative;background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden;box-shadow:0 1px 0 var(--rule)}
+
+.slide{position:absolute;inset:0;display:none;flex-direction:column;gap:calc(var(--u)*1.5);padding:calc(var(--u)*2.8) calc(var(--u)*3.8) calc(var(--u)*2.4);font-size:calc(var(--u)*1.85);line-height:1.34}
+.slide.active{display:flex}
+.eyebrow{display:flex;justify-content:space-between;gap:1em;font:600 calc(var(--u)*1.12)/1.1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);border-bottom:2px solid var(--ink);padding-bottom:calc(var(--u)*.7)}
+.eyebrow .part{color:var(--brand)}
+h2{font:700 calc(var(--u)*3.3)/1.02 var(--display);margin:0;text-wrap:balance}
+h3{font:700 calc(var(--u)*1.8)/1.1 var(--display);margin:0 0 calc(var(--u)*.7);text-wrap:balance}
+p{margin:0}
+.lead{font-size:calc(var(--u)*2);max-width:62ch}
+.body{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:calc(var(--u)*1.3)}
+.dense{font-size:calc(var(--u)*1.62)}
+.xdense{font-size:calc(var(--u)*1.48)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2.4);align-items:start}
+.cols > *{min-width:0}
+.cols.wide-left{grid-template-columns:1.25fr 1fr}
+.cols.three{grid-template-columns:repeat(3,1fr)}
+.box{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:calc(var(--u)*1.2) calc(var(--u)*1.4)}
+.muted{color:var(--ink-2)}
+.small{font-size:.86em}
+b,strong{font-weight:700}
+
+/* Sign-marked rule lists */
+ul.rules{list-style:none;margin:0;padding:0;display:grid;gap:calc(var(--u)*.7)}
+ul.rules li{display:grid;grid-template-columns:calc(var(--u)*1.85) 1fr;column-gap:calc(var(--u)*.85);align-items:start}
+ul.rules li > span{min-width:0}
+svg.sg{width:calc(var(--u)*1.85);height:calc(var(--u)*1.85);margin-top:calc(var(--u)*.02)}
+/* Numbered procedure steps: blue mandatory discs carry the step number */
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;gap:calc(var(--u)*.65)}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:calc(var(--u)*1.95) 1fr;column-gap:calc(var(--u)*.85);align-items:start}
+ol.steps li::before{content:counter(s);display:grid;place-items:center;width:calc(var(--u)*1.95);height:calc(var(--u)*1.95);border-radius:50%;background:var(--do);color:var(--on-strong);font:700 calc(var(--u)*1.25)/1 var(--display);font-variant-numeric:tabular-nums}
+ol.steps li > span{min-width:0}
+
+.callout{display:grid;grid-template-columns:calc(var(--u)*2.4) 1fr;gap:calc(var(--u)*1);align-items:start;border:2px solid var(--warn);background:var(--warn-soft);border-radius:4px;padding:calc(var(--u)*1) calc(var(--u)*1.3)}
+.callout svg.sg{width:calc(var(--u)*2.4);height:calc(var(--u)*2.4)}
+.callout.dont{border-color:var(--dont);background:var(--dont-soft)}
+.callout.info{border-color:var(--info);background:var(--info-soft)}
+.callout.do{border-color:var(--do);background:var(--do-soft)}
+.callout b.label{font:700 1.02em/1 var(--display);letter-spacing:.06em;text-transform:uppercase;margin-right:.35em}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;flex:none}
+table.tbl.compact{font-size:calc(var(--u)*1.32)}
+.tbl.compact td{padding:calc(var(--u)*.4) calc(var(--u)*.6)}
+table.tbl{width:100%;border-collapse:collapse;font-size:calc(var(--u)*1.5);font-variant-numeric:tabular-nums}
+.tbl th{font:600 calc(var(--u)*1.12)/1.15 var(--display);letter-spacing:.06em;text-transform:uppercase;text-align:left;color:var(--ink-2);border-bottom:2px solid var(--ink);padding:calc(var(--u)*.45) calc(var(--u)*.7)}
+.tbl td{border-bottom:1px solid var(--rule);padding:calc(var(--u)*.5) calc(var(--u)*.7);vertical-align:top}
+.tbl td.num{font:700 calc(var(--u)*1.6)/1.1 var(--display);white-space:nowrap}
+.chip{display:inline-block;font:700 calc(var(--u)*1.05)/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:calc(var(--u)*.3) calc(var(--u)*.55);border-radius:3px;white-space:nowrap}
+.chip.high{background:var(--dont);color:var(--on-strong)}
+.chip.mod{background:var(--warn);color:var(--sign-ink)}
+.chip.low{background:var(--info);color:var(--on-strong)}
+
+/* Title + dividers */
+.slide.title{background:var(--brand);color:var(--on-strong);justify-content:space-between}
+.slide.title .eyebrow{color:inherit;border-color:currentColor;opacity:.9}
+.slide.title h1{font:700 calc(var(--u)*6.2)/.95 var(--display);margin:0;max-width:16ch;text-wrap:balance;letter-spacing:-.01em}
+.slide.title .sub{font-size:calc(var(--u)*1.9);max-width:46ch;margin-top:calc(var(--u)*1.4)}
+.slide.title .meta{display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*.35) calc(var(--u)*1.4);font-size:calc(var(--u)*1.25)}
+.slide.title .meta dt{font:600 calc(var(--u)*1.1)/1.3 var(--display);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.slide.title .meta dd{margin:0}
+.binband{display:flex;height:calc(var(--u)*1.2);margin:calc(var(--u)*1.2) calc(var(--u)*-3.8) calc(var(--u)*-2.4)}
+.binband span{flex:1}
+.slide.divider{background:var(--brand-soft);justify-content:center}
+.slide.divider .num{font:700 calc(var(--u)*11)/.85 var(--display);color:var(--brand)}
+.slide.divider h2{font-size:calc(var(--u)*5)}
+.slide.divider p{font-size:calc(var(--u)*1.8);max-width:52ch;margin-top:calc(var(--u)*1)}
+
+/* Sign key */
+.signkey{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*1.4)}
+.signkey > div{display:flex;flex-direction:column;gap:calc(var(--u)*.6);border-top:2px solid var(--ink);padding-top:calc(var(--u)*1)}
+.signkey svg.sg{width:calc(var(--u)*4.4);height:calc(var(--u)*4.4)}
+.signkey b{font:700 calc(var(--u)*1.9)/1 var(--display)}
+
+/* Diagrams */
+svg.diagram{width:100%;height:auto;display:block}
+.d-wall{fill:none;stroke:var(--ink);stroke-width:3}
+.d-bed{fill:var(--paper);stroke:var(--ink-2);stroke-width:1.2}
+.d-path{fill:none;stroke:var(--do);stroke-width:4;stroke-linejoin:round}
+.d-ring{fill:none;stroke:var(--do);stroke-width:2.5;stroke-dasharray:7 6}
+.d-table{fill:var(--info-soft);stroke:var(--info);stroke-width:2}
+.d-t{fill:var(--ink);font:700 15px var(--display)}
+.d-s{fill:var(--ink-2);font:12px var(--body)}
+.d-node{fill:var(--panel);stroke:var(--ink);stroke-width:1.5}
+.d-key{fill:var(--do-soft);stroke:var(--do);stroke-width:3}
+.d-arrow{fill:var(--ink-2)}
+.d-start{fill:var(--do)}
+.d-orbit{fill:none;stroke:var(--rule);stroke-width:3}
+.d-bucket{stroke:var(--ink);stroke-width:2.5}
+.d-liq1{fill:var(--do-soft)} .d-liq2{fill:var(--paper)} .d-liq3{fill:var(--info-soft)}
+.d-handle{fill:none;stroke:var(--ink);stroke-width:2.5}
+
+.buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*2)}
+.buckets > div{display:flex;flex-direction:column;gap:calc(var(--u)*.6)}
+.buckets svg{width:calc(var(--u)*9);height:auto}
+.buckets b.n{font:700 calc(var(--u)*2.2)/1 var(--display);color:var(--do)}
+
+/* Bins */
+.bins{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(var(--u)*1)}
+.bin{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:var(--paper);min-width:0}
+.bin .lid{padding:calc(var(--u)*.8) calc(var(--u)*1);font:700 calc(var(--u)*2.1)/1 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.bin .lid small{display:block;font:600 calc(var(--u)*1.05)/1.2 var(--display);letter-spacing:.06em;margin-top:calc(var(--u)*.3)}
+.bin.y .lid{background:var(--bin-yellow);color:var(--sign-ink)}
+.bin.r .lid{background:var(--bin-red);color:#FFFFFF}
+.bin.w .lid{background:var(--bin-white);color:var(--sign-ink);border-bottom:2px solid var(--sign-ink)}
+.bin.b .lid{background:var(--bin-blue);color:#FFFFFF}
+.bin.g .lid{background:var(--panel);color:var(--ink);border-bottom:2px dashed var(--ink-2)}
+.bin ul{margin:0;padding:calc(var(--u)*.8) calc(var(--u)*1) calc(var(--u)*1) calc(var(--u)*2.2);font-size:calc(var(--u)*1.42);display:grid;gap:calc(var(--u)*.3)}
+
+/* Timeline */
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);position:relative;margin-top:calc(var(--u)*.5)}
+.timeline::before{content:"";position:absolute;left:0;right:0;top:calc(var(--u)*1.1);height:3px;background:var(--ink)}
+.timeline > div{position:relative;padding-top:calc(var(--u)*3);padding-right:calc(var(--u)*1)}
+.timeline > div::before{content:"";position:absolute;top:calc(var(--u)*.3);left:0;width:calc(var(--u)*1.8);height:calc(var(--u)*1.8);border-radius:50%;background:var(--panel);border:3px solid var(--ink)}
+.timeline > div.hot::before{background:var(--dont);border-color:var(--dont)}
+.timeline b{display:block;font:700 calc(var(--u)*2.4)/1 var(--display);margin-bottom:calc(var(--u)*.3)}
+
+/* Hand-wash tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1)}
+.tile{border:1px solid var(--rule);border-radius:4px;padding:calc(var(--u)*1) calc(var(--u)*1.2);background:var(--paper);display:flex;gap:calc(var(--u)*1);align-items:flex-start}
+.tile b.n{font:700 calc(var(--u)*3.4)/.85 var(--display);color:var(--do);font-variant-numeric:tabular-nums}
+
+/* Moments */
+.moments{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(var(--u)*.9)}
+.moment{border-top:4px solid var(--do);background:var(--paper);padding:calc(var(--u)*.9) calc(var(--u)*1);display:flex;flex-direction:column;gap:calc(var(--u)*.5);font-size:calc(var(--u)*1.45);min-width:0}
+.moment b.n{font:700 calc(var(--u)*3)/.9 var(--display);color:var(--do)}
+.moment h3{font-size:calc(var(--u)*1.55);margin:0}
+.moment .why{color:var(--ink-2);font-size:.92em}
+
+/* Five moments with plan diagram */
+.cols.mo-layout{grid-template-columns:.78fr 1.7fr;gap:calc(var(--u)*2)}
+.mlist{display:grid;font-size:calc(var(--u)*1.42)}
+.mrow{display:grid;grid-template-columns:calc(var(--u)*2.6) 1fr;gap:calc(var(--u)*.9);border-top:1px solid var(--rule);padding:calc(var(--u)*.55) 0}
+.mrow:last-child{border-bottom:1px solid var(--rule)}
+.mrow > div{min-width:0}
+.mrow b.n{font:700 calc(var(--u)*2.6)/.9 var(--display);color:var(--do)}
+.mrow h3{font-size:calc(var(--u)*1.55);margin:0 0 calc(var(--u)*.2)}
+/* Quiz */
+.quiz{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*1)}
+.q{border:1px solid var(--rule);border-radius:4px;background:var(--paper);padding:calc(var(--u)*1) calc(var(--u)*1.1);display:flex;flex-direction:column;gap:calc(var(--u)*.7);font-size:calc(var(--u)*1.45);min-width:0}
+.q b.n{font:700 calc(var(--u)*1.2)/1 var(--display);letter-spacing:.08em;color:var(--brand);text-transform:uppercase}
+.q button{align-self:flex-start;margin-top:auto}
+.q .ans{border-top:2px solid var(--info);padding-top:calc(var(--u)*.6);font-weight:700}
+
+/* Controls */
+button{font:600 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--panel);border:1.5px solid var(--ink);border-radius:4px;padding:9px 14px;cursor:pointer}
+button:hover{background:var(--brand-soft)}
+button:focus-visible{outline:3px solid var(--do);outline-offset:2px}
+.q button{font-size:calc(var(--u)*1.05);padding:calc(var(--u)*.5) calc(var(--u)*.8)}
+.bar{height:60px;flex:none;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.bar .count{font:700 18px/1 var(--display);min-width:5.5em;text-align:center;font-variant-numeric:tabular-nums}
+.progress{position:absolute;left:0;bottom:0;height:5px;background:var(--brand);transition:width .25s ease}
+.overview{position:fixed;inset:0;z-index:20;background:var(--paper);overflow:auto;padding-block:max(20px,env(safe-area-inset-top,0px)) 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview header{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1100px;margin:0 auto 16px}
+.overview h2{font-size:32px}
+.overview ol{list-style:none;margin:0 auto;padding:0;max-width:1100px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.overview ol button{width:100%;text-align:left;text-transform:none;letter-spacing:0;font:400 15px/1.3 var(--body);display:flex;gap:10px;align-items:baseline;padding:12px}
+.overview ol button b{font:700 18px/1 var(--display);color:var(--brand);min-width:1.6em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Handout mode for phones and narrow windows */
+@media (max-width:760px){
+  body{height:auto}
+  .deck{height:auto;padding-block:16px 32px}
+  .viewport{display:block;container-type:normal}
+  .stage{--u:10px;width:auto;aspect-ratio:auto;container-type:normal;background:none;border:0;box-shadow:none;overflow:visible}
+  .slide{display:flex;position:static;background:var(--panel);border:1px solid var(--rule);border-radius:6px;margin-bottom:16px;padding:20px 16px}
+  .body{overflow:visible}
+  .cols,.cols.wide-left,.cols.three,.buckets,.signkey,.quiz,.tiles{grid-template-columns:1fr}
+  .bins,.moments{grid-template-columns:1fr 1fr}
+  .timeline{grid-template-columns:1fr 1fr;row-gap:16px}
+  .binband{margin:12px -16px -20px}
+  .bar,.progress{display:none}
+}
+@media (prefers-reduced-motion:reduce){.progress{transition:none}}
+/* Agenda */
+.agenda{display:grid}
+.agenda .row{display:grid;grid-template-columns:calc(var(--u)*5) 1fr calc(var(--u)*8);gap:calc(var(--u)*1.4);align-items:center;border-top:1px solid var(--rule);padding:calc(var(--u)*.75) 0}
+.agenda .row:last-child{border-bottom:2px solid var(--ink)}
+.agenda .row > *{min-width:0}
+.agenda b.m{font:700 calc(var(--u)*3.4)/.9 var(--display);color:var(--brand)}
+.agenda h3{margin:0 0 calc(var(--u)*.2)}
+.agenda .min{font:700 calc(var(--u)*2.3)/1 var(--display);text-align:right;font-variant-numeric:tabular-nums}
+.agenda .min small{display:block;font:600 calc(var(--u)*1)/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.agenda .total{display:flex;justify-content:space-between;font:700 calc(var(--u)*1.8)/1 var(--display);padding-top:calc(var(--u)*.8)}
+.slide.divider .when{max-width:none;line-height:1.3;font:600 calc(var(--u)*1.5)/1.3 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-top:calc(var(--u)*1.4)}
+/* Colour tags in answers */
+.tag{display:inline-block;font:700 calc(var(--u)*1.1)/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:calc(var(--u)*.3) calc(var(--u)*.6);border-radius:3px;margin-right:.4em;vertical-align:.08em}
+.tag.y{background:var(--bin-yellow);color:var(--sign-ink)}
+.tag.r{background:var(--bin-red);color:#FFFFFF}
+.tag.w{background:var(--bin-white);color:var(--sign-ink);box-shadow:inset 0 0 0 2px var(--sign-ink)}
+.tag.b{background:var(--bin-blue);color:#FFFFFF}
+.tag.g{background:var(--bin-green);color:#FFFFFF}
+.spot{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*.9)}
+.spot .q{font-size:calc(var(--u)*1.5)}
+.spot .q p.item{font:700 calc(var(--u)*1.9)/1.1 var(--display)}
+.spot .q .ans{font-weight:400}
+/* Observer checklist */
+ul.check{list-style:none;margin:0;padding:0;display:grid;gap:calc(var(--u)*.55)}
+ul.check li label{display:grid;grid-template-columns:calc(var(--u)*2) 1fr;gap:calc(var(--u)*.8);align-items:start;cursor:pointer}
+ul.check input{width:calc(var(--u)*1.7);height:calc(var(--u)*1.7);margin:calc(var(--u)*.1) 0 0;accent-color:var(--info)}
+.scenario{border:2px solid var(--ink);border-radius:4px;padding:calc(var(--u)*1.1) calc(var(--u)*1.4);background:var(--paper)}
+.scenario b.label{font:700 calc(var(--u)*1.2)/1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--brand);display:block;margin-bottom:calc(var(--u)*.4)}
+.d-flow{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
+.d-lock{fill:var(--warn-soft);stroke:var(--ink);stroke-width:2}
+.d-dash{fill:none;stroke:var(--ink-2);stroke-width:2;stroke-dasharray:6 6}
+@media (max-width:760px){
+  .spot{grid-template-columns:1fr 1fr}
+  .agenda .row{grid-template-columns:44px 1fr 64px}
+}
+</style>
+
+<style>.home{font:600 15px/1 var(--display);color:var(--ink);background:var(--panel);border:1.5px solid var(--ink);border-radius:4px;padding:9px 14px;text-decoration:none}.home:hover{background:var(--brand-soft)}.home:focus-visible{outline:3px solid var(--do);outline-offset:2px}.home-top{display:none}@media (max-width:760px){.home-top{display:inline-block;margin:16px 0 0 max(16px,env(safe-area-inset-left,0px))}}</style>
+</head>
+<body>
+<a class="home home-top" href="index.html">← Home</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="sg-do" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11.2" style="fill:var(--do)"/><path d="M6.6 12.4l3.6 3.6 7.3-7.6" style="fill:none;stroke:var(--on-strong);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round"/></symbol>
+    <symbol id="sg-dont" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.8" style="fill:none;stroke:var(--dont);stroke-width:3"/><path d="M5.2 5.2l13.6 13.6" style="stroke:var(--dont);stroke-width:3"/></symbol>
+    <symbol id="sg-warn" viewBox="0 0 24 24"><path d="M12 1.8L23 21.6H1z" style="fill:var(--warn);stroke:#1A1A1A;stroke-width:1.6;stroke-linejoin:round"/><path d="M12 8.4v6.4" style="stroke:#1A1A1A;stroke-width:2.6;stroke-linecap:round"/><circle cx="12" cy="18.1" r="1.45" style="fill:#1A1A1A"/></symbol>
+    <symbol id="sg-info" viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="3" style="fill:var(--info)"/><circle cx="12" cy="6.6" r="1.7" style="fill:var(--on-strong)"/><path d="M12 10.6v7.6" style="stroke:var(--on-strong);stroke-width:3;stroke-linecap:round"/></symbol>
+    <marker id="arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--do)"/></marker>
+  </defs>
+</svg>
+
+<div class="deck">
+<div class="viewport">
+<main class="stage" id="stage" aria-live="polite">
+
+<!-- Title -->
+<section class="slide title" data-title="Title">
+  <div class="eyebrow"><span>Training for staff nurses and hospital attenders</span><span>Taluk Headquarters Hospital, Peermade</span></div>
+  <div>
+    <h1>Keeping Our Hospital Clean and Safe</h1>
+    <p class="sub">Cleaning, biomedical waste, spills, and infection control. Five modules. Three hours.</p>
+  </div>
+  <div>
+    <dl class="meta">
+      <dt>Source</dt><dd>Implementation Guidebook for Kayakalp, Sections B, C and D · BMW Management Rules 2016 and 2018 · WHO hand hygiene guidelines</dd>
+    </dl>
+    <div class="binband" aria-hidden="true"><span style="background:var(--bin-yellow)"></span><span style="background:var(--bin-red)"></span><span style="background:var(--bin-white)"></span><span style="background:var(--bin-blue)"></span><span style="background:var(--bin-green)"></span></div>
+  </div>
+</section>
+
+<!-- Sign key -->
+<section class="slide" data-title="How to read these slides">
+  <div class="eyebrow"><span class="part">Introduction</span><span>Before we start</span></div>
+  <h2>How to read these slides</h2>
+  <div class="body">
+    <p class="lead">Each rule has a sign. The sign tells you the type of rule.</p>
+    <div class="signkey">
+      <div><svg class="sg"><use href="#sg-do"/></svg><b>Blue circle</b><span>Do this.</span></div>
+      <div><svg class="sg"><use href="#sg-dont"/></svg><b>Red circle</b><span>Do not do this.</span></div>
+      <div><svg class="sg"><use href="#sg-warn"/></svg><b>Yellow triangle</b><span>Warning. There is a risk of injury or infection.</span></div>
+      <div><svg class="sg"><use href="#sg-info"/></svg><b>Green square</b><span>Information. This helps you to understand the rule.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Agenda -->
+<section class="slide" data-title="Programme">
+  <div class="eyebrow"><span class="part">Introduction</span><span>Total time: 3 hours</span></div>
+  <h2>Programme</h2>
+  <div class="body dense">
+    <div class="agenda">
+      <div class="row"><b class="m">1</b><div><h3>Hospital cleanliness and environmental hygiene</h3><span class="muted">Routine cleaning, frequency, dilution of disinfectant</span></div><div class="min">40<small>minutes</small></div></div>
+      <div class="row"><b class="m">2</b><div><h3>Biomedical waste management</h3><span class="muted">Separation at source, safe handling, transport</span></div><div class="min">40<small>minutes</small></div></div>
+      <div class="row"><b class="m">3</b><div><h3>Spill management</h3><span class="muted">Blood, body fluids and chemicals</span></div><div class="min">40<small>minutes</small></div></div>
+      <div class="row"><b class="m">4</b><div><h3>Infection prevention, control and staff safety</h3><span class="muted">Hand hygiene, PPE, sharps, needle-stick injury</span></div><div class="min">40<small>minutes</small></div></div>
+      <div class="row"><b class="m">5</b><div><h3>Practical demonstration, assessment, questions</h3><span class="muted">Skill check, role-play, colour-code spotter</span></div><div class="min">20<small>minutes</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 1 ============ -->
+<section class="slide divider" data-title="Module 1: Cleanliness and hygiene">
+  <div class="num">1</div>
+  <h2>Hospital cleanliness and environmental hygiene</h2>
+  <p>How to clean each area. How frequently to clean. How to mix sodium hypochlorite. How to care for mops, washrooms and drains.</p>
+  <p class="when">40 minutes · 1.1 Principles · 1.2 Procedures · 1.3 Logistics and equipment</p>
+</section>
+
+<section class="slide" data-title="1.1 The chain of infection">
+  <div class="eyebrow"><span class="part">Module 1 · 1.1 Principles</span><span>Guidebook p. 37</span></div>
+  <h2>Why we clean: the chain of infection</h2>
+  <div class="body">
+    <div class="cols wide-left">
+      <svg class="diagram" viewBox="0 0 640 400" role="img" aria-label="Chain of infection: germ, place where germs live, way out, way it moves, way in, patient who can get sick.">
+        <ellipse class="d-orbit" cx="320" cy="200" rx="230" ry="150"/>
+        <g class="d-arrow">
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(435,70) rotate(20.6)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(550,200) rotate(90)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(435,330) rotate(159.4)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(205,330) rotate(200.6)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(90,200) rotate(270)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(205,70) rotate(339.4)"/>
+        </g>
+        <rect class="d-node" x="235" y="22" width="170" height="58" rx="6"/><text class="d-t" x="320" y="48" text-anchor="middle">1 · Germ</text><text class="d-s" x="320" y="67" text-anchor="middle">organism</text>
+        <rect class="d-key" x="434" y="96" width="170" height="58" rx="6"/><text class="d-t" x="519" y="122" text-anchor="middle">2 · Where germs live</text><text class="d-s" x="519" y="141" text-anchor="middle">dirty surfaces, mops, hands</text>
+        <rect class="d-node" x="434" y="246" width="170" height="58" rx="6"/><text class="d-t" x="519" y="272" text-anchor="middle">3 · Way out</text><text class="d-s" x="519" y="291" text-anchor="middle">blood, cough, faeces</text>
+        <rect class="d-key" x="235" y="320" width="170" height="58" rx="6"/><text class="d-t" x="320" y="346" text-anchor="middle">4 · Way it moves</text><text class="d-s" x="320" y="365" text-anchor="middle">hands, equipment, air</text>
+        <rect class="d-node" x="36" y="246" width="170" height="58" rx="6"/><text class="d-t" x="121" y="272" text-anchor="middle">5 · Way in</text><text class="d-s" x="121" y="291" text-anchor="middle">wound, mouth, catheter</text>
+        <rect class="d-node" x="36" y="96" width="170" height="58" rx="6"/><text class="d-t" x="121" y="122" text-anchor="middle">6 · Patient at risk</text><text class="d-s" x="121" y="141" text-anchor="middle">susceptible patient</text>
+        <text class="d-t" x="320" y="192" text-anchor="middle">All six links must join</text>
+        <text class="d-t" x="320" y="214" text-anchor="middle">for an infection to occur.</text>
+      </svg>
+      <ul class="rules">
+        <li class="info"><span>An infection occurs only when all six links join.</span></li>
+        <li class="info"><span>If you remove one link, the chain breaks.</span></li>
+        <li class="do"><span><b>Link 2:</b> Your cleaning removes the places where germs live.</span></li>
+        <li class="do"><span><b>Link 4:</b> Clean hands stop germs that move from person to person.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="1.1 High-touch and low-touch surfaces">
+  <div class="eyebrow"><span class="part">Module 1 · 1.1 Principles</span><span>Guidebook p. 34</span></div>
+  <h2>High-touch and low-touch surfaces</h2>
+  <div class="body">
+    <div class="cols">
+      <div class="box">
+        <h3>High-touch surfaces</h3>
+        <p class="muted small">Many hands touch these. Germs move from them to patients.</p>
+        <p style="margin:.6em 0">Door handles · lift buttons · bed rails · light switches · telephones · keyboards · bedside tables · monitors · the wall around the toilet · edges of curtains near patients</p>
+        <ul class="rules"><li class="do"><span>Clean high-touch surfaces more frequently than other surfaces.</span></li></ul>
+      </div>
+      <div class="box">
+        <h3>Low-touch surfaces</h3>
+        <p class="muted small">Few hands touch these. The risk is lower.</p>
+        <p style="margin:.6em 0">Floors · walls · ceilings · mirrors · window sills</p>
+        <ul class="rules">
+          <li class="do"><span>Clean low-touch surfaces on the schedule.</span></li>
+          <li class="do"><span>If a surface is visibly dirty, clean it immediately.</span></li>
+        </ul>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>Flat (horizontal) surfaces collect more dust and germs than walls. Clean them more frequently.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.1 Risk zones">
+  <div class="eyebrow"><span class="part">Module 1 · 1.1 Principles</span><span>Guidebook p. 35–36</span></div>
+  <h2>Each hospital area has a risk zone</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box">
+        <span class="chip high">High risk</span>
+        <p style="margin:.6em 0">OT · ICU · HDU · Casualty · labour room · dialysis unit · CSSD · post-operative ward · surgical ward</p>
+        <ul class="rules"><li class="do"><span>Clean frequently and fully. Use a high-level disinfectant.</span></li></ul>
+      </div>
+      <div class="box">
+        <span class="chip mod">Moderate risk</span>
+        <p style="margin:.6em 0">General wards · laboratory · blood bank · pharmacy · kitchen · laundry · mortuary</p>
+        <ul class="rules"><li class="do"><span>Clean regularly. Between rounds, clean dirty spots.</span></li></ul>
+      </div>
+      <div class="box">
+        <span class="chip low">Low risk</span>
+        <p style="margin:.6em 0">Corridors · offices · stores · record room · seminar room · public areas</p>
+        <ul class="rules"><li class="do"><span>Clean regularly. Use detergent or a low-level disinfectant.</span></li></ul>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>A toilet, staff room or office next to an area has the same risk zone as that area.</span></li>
+      <li class="warn"><span>The risk zone can change. During an outbreak of diarrhoea or flu, a ward becomes a higher-risk area. Obey the new instructions from your supervisor.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.1 Cleaning frequency">
+  <div class="eyebrow"><span class="part">Module 1 · 1.1 Principles</span><span>Guidebook p. 38–39, Table 7</span></div>
+  <h2>How frequently to clean each area</h2>
+  <div class="body">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Area</th><th>Zone</th><th>Minimum routine cleaning</th></tr></thead>
+      <tbody>
+        <tr><td>All ICUs</td><td><span class="chip high">High</span></td><td>3 times each day, at fixed times. Extra cleaning when necessary.</td></tr>
+        <tr><td>Operation theatre</td><td><span class="chip high">High</span></td><td>At the start of the day, between cases, at the end of the list. Plus a full wash-down.</td></tr>
+        <tr><td>Casualty, labour room, dialysis, procedure rooms</td><td><span class="chip high">High</span></td><td>2 times each day, at fixed times. Extra cleaning when necessary.</td></tr>
+        <tr><td>General wards, laboratory, isolation rooms, soiled linen area</td><td><span class="chip mod">Medium</span></td><td>2 times each day, at fixed times. Extra cleaning when necessary.</td></tr>
+        <tr><td>Corridors, offices, reception, OPD waiting, public areas</td><td><span class="chip low">Low</span></td><td>2 times each day, at fixed times.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ul class="rules"><li class="do"><span>Extra cleaning: if a surface becomes dirty, or after a spill, clean it immediately.</span></li></ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 Before and while you clean">
+  <div class="eyebrow"><span class="part">Module 1 · 1.2 Procedures</span><span>Guidebook p. 40</span></div>
+  <h2>Before you clean and while you clean</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div>
+        <h3>Before you start</h3>
+        <ol class="steps">
+          <li><span>Look for an isolation sign at the door. Obey the precautions on it.</span></li>
+          <li><span>Get all the cleaning materials before you go into the room.</span></li>
+          <li><span>Make sure that your equipment is clean.</span></li>
+          <li><span>Prepare the solution. Then clean your hands and put on gloves.</span></li>
+          <li><span>Remove clutter from the area.</span></li>
+        </ol>
+      </div>
+      <div>
+        <h3>While you clean</h3>
+        <ul class="rules">
+          <li class="do"><span>Remove visible dirt before you apply the disinfectant.</span></li>
+          <li class="do"><span>Use a dry dust mop before the wet mop.</span></li>
+          <li class="do"><span>Dip the mop one time. Clean 120 sq ft (approximately 11 m²). Then dip it again.</span></li>
+          <li class="do"><span>Replace the solution after 240 sq ft, or immediately after blood or body fluid.</span></li>
+          <li class="dont"><span>Do not shake mops. Do not use a broom in patient care areas.</span></li>
+          <li class="warn"><span>Look for needles and sharp objects before you mop.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 Three-bucket system">
+  <div class="eyebrow"><span class="part">Module 1 · 1.2 Procedures</span><span>Guidebook p. 48, Figure 19</span></div>
+  <h2>Use the three-bucket system</h2>
+  <div class="body">
+    <div class="buckets">
+      <div>
+        <svg viewBox="0 0 140 140" aria-hidden="true"><path class="d-handle" d="M24 30C24 4 116 4 116 30"/><path class="d-bucket d-liq1" d="M14 30H126L114 134H26Z"/><circle cx="50" cy="52" r="5" class="d-liq2" style="stroke:var(--ink-2)"/><circle cx="72" cy="44" r="4" class="d-liq2" style="stroke:var(--ink-2)"/><circle cx="92" cy="56" r="6" class="d-liq2" style="stroke:var(--ink-2)"/></svg>
+        <b class="n">Bucket 1</b>
+        <h3>Detergent water</h3>
+        <p>Dip the mop. Clean the floor.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 140 140" aria-hidden="true"><path class="d-handle" d="M24 30C24 4 116 4 116 30"/><path class="d-bucket d-liq2" d="M14 30H126L114 134H26Z"/></svg>
+        <b class="n">Bucket 2</b>
+        <h3>Clean water</h3>
+        <p>Rinse the dirty mop. Squeeze it in the wringer.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 140 140" aria-hidden="true"><path class="d-handle" d="M24 30C24 4 116 4 116 30"/><path class="d-bucket d-liq3" d="M14 30H126L114 134H26Z"/><path d="M70 62v40M50 82h40" style="stroke:var(--info);stroke-width:7;stroke-linecap:round"/></svg>
+        <b class="n">Bucket 3</b>
+        <h3>Disinfectant solution</h3>
+        <p>Dip the mop. Clean the floor again.</p>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>Use light-coloured buckets. You can see dirty water quickly.</span></li>
+      <li class="dont"><span>Do not put a dirty mop back into bucket 1 or bucket 3 before you rinse it in bucket 2.</span></li>
+      <li class="do"><span>Replace the water in bucket 2 when it becomes dirty.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 Direction of cleaning">
+  <div class="eyebrow"><span class="part">Module 1 · 1.2 Procedures</span><span>Guidebook p. 40–41, Figures 17–18</span></div>
+  <h2>Top to bottom · clean to dirty · inside out</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div>
+        <h3>Top to bottom</h3>
+        <svg class="diagram" viewBox="0 0 220 256" role="img" aria-label="Clean from the ceiling and high surfaces down to the floor.">
+          <path class="d-wall" d="M20 24H200V232H20Z"/>
+          <rect class="d-bed" x="40" y="44" width="60" height="16"/><text class="d-s" x="110" y="57">high shelf</text>
+          <rect class="d-bed" x="40" y="120" width="90" height="16"/><text class="d-s" x="138" y="133">table</text>
+          <path class="d-bed" d="M20 210H200"/><text class="d-s" x="40" y="225">floor (last)</text>
+          <path class="d-path" d="M175 40V205" marker-end="url(#arr)"/>
+          <circle class="d-start" cx="175" cy="40" r="7"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Ward: inside out</h3>
+        <svg class="diagram" viewBox="0 0 360 256" role="img" aria-label="Ward plan. The mop path starts at the far end and moves in rows to the door.">
+          <path class="d-wall" d="M150 232H20V24H340V232H210"/>
+          <rect class="d-bed" x="26" y="60" width="22" height="12"/><rect class="d-bed" x="26" y="104" width="22" height="12"/><rect class="d-bed" x="26" y="148" width="22" height="12"/>
+          <rect class="d-bed" x="312" y="60" width="22" height="12"/><rect class="d-bed" x="312" y="104" width="22" height="12"/><rect class="d-bed" x="312" y="148" width="22" height="12"/>
+          <path class="d-path" d="M58 44H300V88H58V132H300V176H180V238" marker-end="url(#arr)"/>
+          <circle class="d-start" cx="58" cy="44" r="7"/>
+          <text class="d-t" x="70" y="38">Start: far end</text>
+          <text class="d-t" x="222" y="250">Finish: door</text>
+        </svg>
+      </div>
+      <div>
+        <h3>OT: table out to door</h3>
+        <svg class="diagram" viewBox="0 0 360 256" role="img" aria-label="Operation theatre plan. Cleaning starts at the OT table and moves outward in rings to the door.">
+          <path class="d-wall" d="M150 232H20V24H340V232H210"/>
+          <rect class="d-ring" x="40" y="40" width="280" height="172" rx="14"/>
+          <rect class="d-ring" x="95" y="72" width="170" height="108" rx="12"/>
+          <rect class="d-table" x="145" y="110" width="70" height="32" rx="4"/>
+          <text class="d-t" x="180" y="131" text-anchor="middle">1</text>
+          <text class="d-t" x="104" y="92">2</text>
+          <text class="d-t" x="50" y="60">3</text>
+          <path class="d-path" d="M180 146V238" marker-end="url(#arr)"/>
+          <text class="d-t" x="222" y="250">4 · Last: door</text>
+        </svg>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="do"><span>Clean the toilet last. When the floor is wet, put a "Wet Floor" sign.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 Sodium hypochlorite dilution">
+  <div class="eyebrow"><span class="part">Module 1 · 1.2 Procedures</span><span>Guidebook p. 43–44, Tables 8–9</span></div>
+  <h2>Mix sodium hypochlorite correctly</h2>
+  <div class="body dense">
+    <p>For bleach with a minimum of 5% sodium hypochlorite. Each line makes 1 litre.</p>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Solution</th><th>Use</th><th>Bleach</th><th>Water</th></tr></thead>
+      <tbody>
+        <tr><td><b>1%</b> (1:100, 500 ppm)</td><td>Wipe general surfaces. Small blood spills. Soak soiled linen for 5 minutes, then rinse.</td><td class="num">10 ml</td><td class="num">990 ml</td></tr>
+        <tr><td><b>10%</b> (1:10, 5000 ppm)</td><td>Large blood or body fluid spills (more than 10 ml).</td><td class="num">100 ml</td><td class="num">900 ml</td></tr>
+        <tr><td><b>0.5%</b> (1:200, 250 ppm)</td><td>Disinfect mops, buckets and other cleaning equipment.</td><td class="num">5 ml</td><td class="num">995 ml</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="cols">
+      <ol class="steps">
+        <li><span>Put on utility gloves. Go to an area with good airflow.</span></li>
+        <li><span>Fill the bottle with water first. Then add the bleach.</span></li>
+        <li><span>Measure the bleach with a syringe or measuring cup. Do not guess.</span></li>
+        <li><span>Use an opaque bottle with a tight cap. Write the name, date and time on it.</span></li>
+      </ol>
+      <div class="callout"><svg class="sg"><use href="#sg-warn"/></svg><span><b class="label">Warning</b>Do not mix bleach with acid, ammonia or urine. This makes a poisonous chlorine gas. Mix fresh solution each day. Bleach becomes weak in sunlight and with time.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 Other cleaning chemicals">
+  <div class="eyebrow"><span class="part">Module 1 · 1.2 Procedures</span><span>Guidebook p. 42–47</span></div>
+  <h2>Other cleaning chemicals</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box"><h3>Detergent or liquid soap</h3><p>General cleaning. With good scrubbing, it removes 80–90% of germs.</p><ul class="rules" style="margin-top:.5em"><li class="do"><span>Mix it just before use. Discard what is left.</span></li></ul></div>
+      <div class="box"><h3>Aldehyde-based disinfectant</h3><p>High-level disinfectant for OT, ICU and labour room surfaces.</p><ul class="rules" style="margin-top:.5em"><li class="do"><span>Daily use: 7 ml in 1 litre of water.</span></li></ul></div>
+      <div class="box"><h3>Alcohol 60–90%</h3><p>Small items only: thermometers, stethoscopes, equipment buttons.</p><ul class="rules" style="margin-top:.5em"><li class="warn"><span>It burns easily. Do not use it on large surfaces or near a flame.</span></li></ul></div>
+    </div>
+    <ul class="rules">
+      <li class="do"><span>Keep all chemicals in a locked cupboard, in a cool place, away from sunlight.</span></li>
+      <li class="do"><span>Use the container with the earliest expiry date first.</span></li>
+      <li class="dont"><span>Do not pour chemicals into the drain without treatment. Do not use phenyl in the nursery or on food surfaces.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.3 Care of mops, cloths and tools">
+  <div class="eyebrow"><span class="part">Module 1 · 1.3 Logistics</span><span>Guidebook p. 48–50, Table 10</span></div>
+  <h2>Wash, dry and store mops, cloths and tools</h2>
+  <div class="body">
+    <div class="tbl-wrap">
+    <table class="tbl xdense">
+      <thead><tr><th>Item</th><th>Wash</th><th>Disinfect and dry</th></tr></thead>
+      <tbody>
+        <tr><td><b>Cotton mop and cloth</b></td><td>Wash with soap and water. Rinse out all the soap.</td><td>Soak for 30 minutes in 0.5% hypochlorite. Rinse with plain water. Dry fully.</td></tr>
+        <tr><td><b>Microfiber mop</b></td><td>Wash with mild soap. Do not use a brush.</td><td>Put in hot water (70–80 °C) for 2 minutes. Do not use bleach.</td></tr>
+        <tr><td><b>Dry dust mop</b></td><td>Do not wash it. Clean it with a hand brush in an open area.</td><td>—</td></tr>
+        <tr><td><b>Bucket and trolley</b></td><td>Wash with soap, water and a brush. Rinse.</td><td>Rinse with 0.5% hypochlorite for 1 minute. Rinse. Dry in a ventilated area.</td></tr>
+        <tr><td><b>Utility gloves</b></td><td>After each session, wash them with soap and water before you remove them.</td><td>End of day: soak 1 minute in 0.5% hypochlorite. Rinse. Hang to dry.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ul class="rules dense">
+      <li class="do"><span>Use different mops and cloths for critical areas, general areas and toilets. Use the colour code.</span></li>
+      <li class="do"><span>Keep equipment in the dirty utility room. Do not keep it in patient areas, behind doors or in toilets.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.3 Washrooms, drains and pests">
+  <div class="eyebrow"><span class="part">Module 1 · 1.3 Logistics</span><span>Guidebook p. 39–40, 52, 59, 75</span></div>
+  <h2>Washrooms, drains and pest control</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box">
+        <h3>Washrooms</h3>
+        <ul class="rules">
+          <li class="do"><span>Clean toilets with chlorine solution. It also removes bad smell.</span></li>
+          <li class="do"><span>Clean the wall around the toilet. Many hands touch it.</span></li>
+          <li class="do"><span>Use a rubber wiper for the floor. Keep the floor dry.</span></li>
+          <li class="do"><span>Make sure that there are water, soap and a bin.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Drains</h3>
+        <ul class="rules">
+          <li class="do"><span>Keep all drains covered.</span></li>
+          <li class="do"><span>Clean drains one time each week.</span></li>
+          <li class="do"><span>If a drain is blocked or leaks, tell your supervisor.</span></li>
+          <li class="dont"><span>Do not let water collect. Still water lets mosquitoes and flies breed.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Pests</h3>
+        <ul class="rules">
+          <li class="do"><span>Remove cobwebs and bird nests.</span></li>
+          <li class="do"><span>Keep bins closed. Remove food waste every day.</span></li>
+          <li class="dont"><span>Do not let stray animals into the hospital.</span></li>
+          <li class="do"><span>If you see rats or cockroaches, tell your supervisor.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 2 ============ -->
+<section class="slide divider" data-title="Module 2: Biomedical waste">
+  <div class="num">2</div>
+  <h2>Biomedical waste management</h2>
+  <p>Separate waste at the place where you make it. Handle it safely. Move it on a safe route.</p>
+  <p class="when">40 minutes · 2.1 Colour codes · 2.2 Handling and storage</p>
+</section>
+
+<section class="slide" data-title="2.1 Colour-coded segregation">
+  <div class="eyebrow"><span class="part">Module 2 · 2.1 Segregation</span><span>Guidebook p. 56–57, 71–72 · BMW Rules 2016 &amp; 2018</span></div>
+  <h2>Put each waste in the correct colour</h2>
+  <div class="body">
+    <div class="bins">
+      <div class="bin y"><div class="lid">Yellow<small>Bin with yellow bag</small></div><ul><li>Body parts (anatomical waste)</li><li>Soiled cotton and dressings</li><li>Expired or discarded medicines</li><li>Chemical waste</li></ul></div>
+      <div class="bin r"><div class="lid">Red<small>Bin with red bag</small></div><ul><li>Contaminated plastic</li><li>IV sets and tubing</li><li>Catheters, urine bags</li><li>Syringes without needles</li><li>Gloves</li></ul></div>
+      <div class="bin b"><div class="lid">Blue<small>Puncture-proof box</small></div><ul><li>Broken glass</li><li>Ampoules and medicine vials</li><li>Metal implants</li></ul></div>
+      <div class="bin w"><div class="lid">White<small>Translucent sharps box</small></div><ul><li>Needles</li><li>Scalpels and blades</li><li>Syringes with fixed needles</li></ul></div>
+      <div class="bin g"><div class="lid">Black / Green<small>General waste</small></div><ul><li>Not infectious</li><li>Food waste, paper, packaging</li><li>Goes to municipal waste</li></ul></div>
+    </div>
+    <ul class="rules dense">
+      <li class="do"><span>Separate the waste at the place where you make it.</span></li>
+      <li class="dont"><span>Do not mix general waste with biomedical waste. Do not take waste out of a bag to separate it again.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="2.2 Bags: fill, tie, label">
+  <div class="eyebrow"><span class="part">Module 2 · 2.2 Handling</span><span>Guidebook p. 55–58 · BMW Rules 2018 amendment</span></div>
+  <h2>Fill, tie, label and bar-code the bags</h2>
+  <div class="body">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>Replace the bag when it is 3/4 full.</span></li>
+        <li><span>Hold the bag at the top. Tie it tightly.</span></li>
+        <li><span>Put a label on the bag: biohazard symbol, date and area (ward).</span></li>
+        <li><span>Put the bar-code label on each bag and container that goes to the common treatment facility.</span></li>
+        <li><span>Put a new bag of the same colour in the bin.</span></li>
+      </ol>
+      <ul class="rules">
+        <li class="dont"><span>Do not fill a bag more than 3/4. A full bag can tear or spill.</span></li>
+        <li class="dont"><span>Do not push down on waste with your hands. Sharps can injure you.</span></li>
+        <li class="dont"><span>Do not use chlorinated plastic bags.</span></li>
+        <li class="info"><span>The label and bar code show where the waste came from.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="2.2 Safe internal transport">
+  <div class="eyebrow"><span class="part">Module 2 · 2.2 Handling</span><span>Guidebook p. 57–59</span></div>
+  <h2>Move waste safely inside the hospital</h2>
+  <div class="body dense">
+    <svg class="diagram" viewBox="0 0 940 170" role="img" aria-label="Waste route: ward, covered trolley, low-traffic route, central storage, treatment facility vehicle.">
+      <rect class="d-flow" x="8" y="20" width="166" height="80" rx="6"/><text class="d-t" x="91" y="52" text-anchor="middle">Ward · OT · Lab</text><text class="d-s" x="91" y="74" text-anchor="middle">separate at source</text>
+      <rect class="d-flow" x="197" y="20" width="166" height="80" rx="6"/><text class="d-t" x="280" y="52" text-anchor="middle">Covered trolley</text><text class="d-s" x="280" y="74" text-anchor="middle">only for waste</text>
+      <rect class="d-flow" x="386" y="20" width="166" height="80" rx="6"/><text class="d-t" x="469" y="52" text-anchor="middle">Low-traffic route</text><text class="d-s" x="469" y="74" text-anchor="middle">not through OPD or ICU</text>
+      <rect class="d-lock" x="575" y="20" width="166" height="80" rx="6"/><text class="d-t" x="658" y="52" text-anchor="middle">Central BMW store</text><text class="d-s" x="658" y="74" text-anchor="middle">locked · max. 48 hours</text>
+      <rect class="d-flow" x="764" y="20" width="166" height="80" rx="6"/><text class="d-t" x="847" y="52" text-anchor="middle">Treatment facility</text><text class="d-s" x="847" y="74" text-anchor="middle">CBMWTF vehicle</text>
+      <path class="d-path" d="M176 60H193" marker-end="url(#arr)"/><path class="d-path" d="M365 60H382" marker-end="url(#arr)"/><path class="d-path" d="M554 60H571" marker-end="url(#arr)"/><path class="d-path" d="M743 60H760" marker-end="url(#arr)"/>
+      <path class="d-dash" d="M8 140H930"/><text class="d-s" x="469" y="160" text-anchor="middle">Clean supplies and food use a different route.</text>
+    </svg>
+    <div class="cols">
+      <ul class="rules">
+        <li class="do"><span>Collect waste every day at fixed times.</span></li>
+        <li class="do"><span>Use a closed, covered trolley with wheels and a biohazard label.</span></li>
+        <li class="do"><span>Use a different trolley, at a different time, for general waste.</span></li>
+      </ul>
+      <ul class="rules">
+        <li class="do"><span>Use the route on the hospital route map.</span></li>
+        <li class="do"><span>After each trip, wash, disinfect and dry the trolley.</span></li>
+        <li class="dont"><span>Do not put general waste in the central BMW store.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="2.2 Health of waste handlers">
+  <div class="eyebrow"><span class="part">Module 2 · 2.2 Staff safety</span><span>Guidebook p. 58, 77, 121–122</span></div>
+  <h2>Protect the health of waste handlers</h2>
+  <div class="body">
+    <div class="cols">
+      <div class="box">
+        <h3>Wear this PPE when you handle waste</h3>
+        <ul class="rules">
+          <li class="do"><span>Gum boots</span></li>
+          <li class="do"><span>Heavy-duty gloves</span></li>
+          <li class="do"><span>Mask</span></li>
+          <li class="do"><span>Eye protection</span></li>
+          <li class="do"><span>Plastic apron</span></li>
+        </ul>
+      </div>
+      <ul class="rules">
+        <li class="do"><span>Get all doses of the Hepatitis B vaccine. Get the tetanus vaccine.</span></li>
+        <li class="do"><span>Go for your health check-up each year.</span></li>
+        <li class="info"><span>The hospital keeps a record of your vaccines and check-ups.</span></li>
+        <li class="do"><span>Go to the training on waste management. The hospital keeps a training record.</span></li>
+        <li class="warn"><span>If you get an injury from waste, do first aid and tell your supervisor immediately.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 3 ============ -->
+<section class="slide divider" data-title="Module 3: Spill management">
+  <div class="num">3</div>
+  <h2>Spill management</h2>
+  <p>Blood, body fluids and chemicals. Act quickly. Protect yourself first.</p>
+  <p class="when">40 minutes · 3.1 Blood and body fluid spills · 3.2 Spill kit · Chemical and mercury spills</p>
+</section>
+
+<section class="slide" data-title="3.1 Small spill">
+  <div class="eyebrow"><span class="part">Module 3 · 3.1 Blood and body fluids</span><span>Guidebook p. 112</span></div>
+  <h2>Small spill: a few drops, less than 10 ml</h2>
+  <div class="body">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>Put on utility (heavy-duty) gloves and other PPE.</span></li>
+        <li><span>If there are sharps or glass, pick them up with forceps. Put them in a puncture-proof container.</span></li>
+        <li><span>Wipe the spill with newspaper or absorbent paper wet with 1% sodium hypochlorite.</span></li>
+        <li><span>Discard the paper in the yellow bag. Do this again until no soil is visible.</span></li>
+        <li><span>Mop the area with 1% sodium hypochlorite. Let it dry naturally.</span></li>
+        <li><span>Remove the gloves. Clean your hands.</span></li>
+      </ol>
+      <div class="box" style="display:grid;gap:calc(var(--u)*1)">
+        <div><span class="chip low">1% · 500 ppm</span></div>
+        <p>10 ml of 5% bleach + 990 ml of water.</p>
+        <ul class="rules">
+          <li class="dont"><span>Do not pick up glass or sharps with your hands.</span></li>
+          <li class="dont"><span>Do not dry the area with a cloth. Let it dry naturally.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.1 Large spill">
+  <div class="eyebrow"><span class="part">Module 3 · 3.1 Blood and body fluids</span><span>Guidebook p. 112</span></div>
+  <h2>Large spill: more than 10 ml</h2>
+  <div class="body dense">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>Close off the area. Keep people away.</span></li>
+        <li><span>Put on utility gloves, apron, mask and shoe covers.</span></li>
+        <li><span>Cover the spill with absorbent paper, pads or cloth. This stops the spill from spreading.</span></li>
+        <li><span>Pour 10% sodium hypochlorite on it. Make the spill and paper fully wet. (Or put chlorine granules on the spill, then cover it.)</span></li>
+        <li><span>Wait 5 minutes (contact time).</span></li>
+        <li><span>Remove the paper. Discard it in the yellow biohazard bag.</span></li>
+        <li><span>Wipe again with 10% solution until no soil is visible. Mop one time. Let it dry naturally.</span></li>
+        <li><span>Put all used items in the yellow bag. Remove PPE. Clean your hands.</span></li>
+      </ol>
+      <div class="box" style="display:grid;gap:calc(var(--u)*1)">
+        <div><span class="chip high">10% · 5000 ppm</span></div>
+        <p>100 ml of 5% bleach + 900 ml of water.</p>
+        <div class="callout"><svg class="sg"><use href="#sg-warn"/></svg><span>Do not shorten the 5-minute contact time. The chlorine needs this time to kill the germs.</span></div>
+        <ul class="rules"><li class="do"><span>Tell your supervisor about the spill.</span></li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.2 Spill kit">
+  <div class="eyebrow"><span class="part">Module 3 · 3.2 Spill kit</span><span>Guidebook p. 112–113</span></div>
+  <h2>Contents of the spill kit</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div class="box">
+        <h3>Blood and body fluid spill kit</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="kit1"><span>Utility (heavy-duty) gloves: 2 pairs</span></label></li>
+          <li><label><input type="checkbox" id="kit2"><span>Plastic apron</span></label></li>
+          <li><label><input type="checkbox" id="kit3"><span>Mask and eye protection</span></label></li>
+          <li><label><input type="checkbox" id="kit4"><span>Shoe covers (or plastic bags for shoes)</span></label></li>
+          <li><label><input type="checkbox" id="kit5"><span>Absorbent material: newspaper, blotting paper or pads</span></label></li>
+          <li><label><input type="checkbox" id="kit6"><span>10% sodium hypochlorite in an opaque bottle, or chlorine granules</span></label></li>
+          <li><label><input type="checkbox" id="kit7"><span>Forceps or tongs, and a scoop</span></label></li>
+          <li><label><input type="checkbox" id="kit8"><span>Yellow biohazard bags and a puncture-proof container</span></label></li>
+        </ul>
+      </div>
+      <ul class="rules">
+        <li class="do"><span>Keep a spill kit in each ward, the laboratory, the sample collection room, labour room and OT.</span></li>
+        <li class="do"><span>After use, fill the kit again immediately. Put it back in its usual place.</span></li>
+        <li class="do"><span>Write the date on the hypochlorite bottle. Replace it after 30 days.</span></li>
+        <li class="info"><span>Stored hypochlorite loses half of its strength in 30 days.</span></li>
+        <li class="do"><span>Get a mop and bucket from housekeeping. Wash and disinfect them after use.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.2 Chemical spill">
+  <div class="eyebrow"><span class="part">Module 3 · Chemical spills</span><span>Guidebook p. 113–116</span></div>
+  <h2>Chemical spill: five steps</h2>
+  <div class="body dense">
+    <div class="cols">
+      <ol class="steps">
+        <li><span><b>Make the area safe.</b> Keep people away. Stand the container up, or put it in a larger container.</span></li>
+        <li><span><b>Read the safety data sheet (MSDS).</b> It tells you how to clean the chemical and how to give first aid.</span></li>
+        <li><span><b>Clean the spill.</b> Wear nitrile gloves and goggles. Cover the spill with absorbent from the edges in. Collect it with a dust pan into a labelled chemical bin.</span></li>
+        <li><span><b>Tell your supervisor.</b></span></li>
+        <li><span><b>Fill the chemical spill kit again.</b></span></li>
+      </ol>
+      <ul class="rules">
+        <li class="warn"><span>Chemical that burns easily (for example, spirit): turn off all electrical and heat equipment first.</span></li>
+        <li class="do"><span>Acid: put sodium bicarbonate on it slowly, from the outside in.</span></li>
+        <li class="dont"><span>Do not breathe the powder or the gas.</span></li>
+        <li class="dont"><span>Do not use a vacuum cleaner on a chemical spill.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.2 Mercury spill">
+  <div class="eyebrow"><span class="part">Module 3 · Chemical spills</span><span>Guidebook p. 67–70</span></div>
+  <h2>Broken thermometer or BP apparatus: mercury spill</h2>
+  <div class="body xdense">
+    <div class="callout"><svg class="sg"><use href="#sg-warn"/></svg><span><b class="label">Warning</b>Mercury vapour is poisonous. You cannot see it or smell it. It causes damage to the brain, kidneys and unborn babies.</span></div>
+    <div class="cols">
+      <ol class="steps">
+        <li><span>Move all people away from the area. Open the windows.</span></li>
+        <li><span>Remove your rings, watch and other jewellery.</span></li>
+        <li><span>Put on a mask and rubber gloves.</span></li>
+        <li><span>Pick up broken glass carefully. Put it in a puncture-proof container.</span></li>
+        <li><span>Find the mercury beads with a torch. Push them together with a card.</span></li>
+      </ol>
+      <ol class="steps" style="counter-reset:s 5">
+        <li><span>Pull up the beads with a syringe without a needle. Put them in a bottle half full of water. Close it tightly.</span></li>
+        <li><span>Pick up very small beads with sticky tape.</span></li>
+        <li><span>Seal all used items in a bag. Label it: "Hazardous Waste, Handle with Care".</span></li>
+        <li><span>Fill the mercury spill kit again.</span></li>
+      </ol>
+    </div>
+    <ul class="rules">
+      <li class="dont"><span>Do not use a broom or a vacuum cleaner. Do not touch mercury with bare hands. Do not pour mercury into a drain.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ MODULE 4 ============ -->
+<section class="slide divider" data-title="Module 4: Infection prevention">
+  <div class="num">4</div>
+  <h2>Infection prevention, control and staff safety</h2>
+  <p>Hand hygiene. Personal protective equipment (PPE). Sharps and needle-stick injury.</p>
+  <p class="when">40 minutes · 4.1 Hand hygiene · 4.2 PPE · 4.3 Sharps and NSI</p>
+</section>
+
+<section class="slide" data-title="4.1 Hand rub or hand wash">
+  <div class="eyebrow"><span class="part">Module 4 · 4.1 Hand hygiene</span><span>Guidebook p. 83–88</span></div>
+  <h2>Hand rub or hand wash?</h2>
+  <div class="body dense">
+    <p class="lead">Dirty hands are the main cause of infections in hospitals.</p>
+    <div class="cols">
+      <div class="box">
+        <h3>Soap and water · 40–60 seconds</h3>
+        <ul class="rules">
+          <li class="do"><span>When your hands are visibly dirty.</span></li>
+          <li class="do"><span>When there is blood or body fluid on your hands.</span></li>
+          <li class="do"><span>After you use the toilet.</span></li>
+          <li class="do"><span>During an outbreak of diarrhoea.</span></li>
+        </ul>
+        <p class="muted small" style="margin-top:.6em">Do each step 5 times. Dry with clean paper. If the tap is not an elbow tap, close it with the paper.</p>
+      </div>
+      <div class="box">
+        <h3>Alcohol hand rub · 20–30 seconds</h3>
+        <ul class="rules">
+          <li class="do"><span>When your hands are not visibly dirty.</span></li>
+          <li class="do"><span>Before and after you touch a patient.</span></li>
+          <li class="do"><span>After you remove gloves.</span></li>
+          <li class="do"><span>After you touch objects near the patient.</span></li>
+        </ul>
+        <p class="muted small" style="margin-top:.6em">Use enough to wet all of both hands. Rub until dry. Apply only to dry hands.</p>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="dont"><span>Do not use soap and hand rub at the same time.</span></li>
+      <li class="do"><span>Keep nails short. Remove rings, watches and bracelets.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.1 Six steps of hand hygiene">
+  <div class="eyebrow"><span class="part">Module 4 · 4.1 Hand hygiene · nurses and attenders</span><span>Guidebook p. 87–88 (WHO)</span></div>
+  <h2>Six steps to clean your hands</h2>
+  <div class="body">
+    <div class="tiles">
+      <div class="tile"><b class="n">1</b><span>Rub palm against palm.</span></div>
+      <div class="tile"><b class="n">2</b><span>Put one palm on the back of the other hand. Interlace the fingers and rub. Change hands.</span></div>
+      <div class="tile"><b class="n">3</b><span>Put palm against palm. Interlace the fingers and rub.</span></div>
+      <div class="tile"><b class="n">4</b><span>Lock the fingers together. Rub the backs of the fingers against the other palm.</span></div>
+      <div class="tile"><b class="n">5</b><span>Hold one thumb in the other hand. Rub it in a circle. Change hands.</span></div>
+      <div class="tile"><b class="n">6</b><span>Rub the fingertips in a circle in the other palm. Change hands.</span></div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>Use the same six steps for soap and water and for alcohol hand rub.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.1 Five moments">
+  <div class="eyebrow"><span class="part">Module 4 · 4.1 Hand hygiene · staff nurses</span><span>Guidebook p. 84–86, Figure 32 (WHO)</span></div>
+  <h2>WHO five moments for hand hygiene</h2>
+  <div class="body">
+    <div class="cols mo-layout">
+      <svg class="diagram" viewBox="0 0 360 400" role="img" aria-label="Plan of a patient bed. Hand hygiene point 1 is where you go into the patient zone, points 2 and 3 are at the patient, point 4 is where you leave the zone, and point 5 is at the bedside table.">
+        <rect x="8" y="8" width="344" height="384" rx="6" style="fill:var(--paper);stroke:var(--rule);stroke-width:2"/>
+        <text class="d-s" x="20" y="30">Health-care area</text>
+        <rect x="76" y="56" width="236" height="300" rx="22" class="d-ring"/>
+        <text class="d-t" x="194" y="48" text-anchor="middle">Patient zone</text>
+        <rect x="130" y="92" width="96" height="214" rx="8" class="d-bed"/>
+        <rect x="146" y="102" width="64" height="30" rx="6" style="fill:var(--panel);stroke:var(--ink-2);stroke-width:1.2"/>
+        <path d="M134 186H222" style="stroke:var(--ink-2);stroke-width:1.2"/>
+        <circle cx="178" cy="150" r="13" style="fill:var(--panel);stroke:var(--ink);stroke-width:1.5"/>
+        <rect x="240" y="104" width="50" height="48" rx="4" class="d-table"/>
+        <text class="d-s" x="265" y="132" text-anchor="middle">table</text>
+        <circle cx="108" cy="112" r="7" style="fill:none;stroke:var(--ink-2);stroke-width:2"/>
+        <path d="M108 119V170" style="stroke:var(--ink-2);stroke-width:2"/>
+        <text class="d-s" x="92" y="186">IV</text>
+        <path class="d-path" d="M14 220H62" marker-end="url(#arr)"/>
+        <text class="d-s" x="14" y="246">going in</text>
+        <path class="d-path" d="M66 320H18" marker-end="url(#arr)"/>
+        <text class="d-s" x="14" y="346">leaving</text>
+        <g style="font:700 17px var(--display)">
+          <circle cx="76" cy="220" r="16" class="d-start"/><text x="76" y="226" text-anchor="middle" style="fill:var(--on-strong)">1</text>
+          <circle cx="146" cy="204" r="16" class="d-start"/><text x="146" y="210" text-anchor="middle" style="fill:var(--on-strong)">2</text>
+          <circle cx="206" cy="262" r="16" class="d-start"/><text x="206" y="268" text-anchor="middle" style="fill:var(--on-strong)">3</text>
+          <circle cx="76" cy="320" r="16" class="d-start"/><text x="76" y="326" text-anchor="middle" style="fill:var(--on-strong)">4</text>
+          <circle cx="265" cy="176" r="16" class="d-start"/><text x="265" y="182" text-anchor="middle" style="fill:var(--on-strong)">5</text>
+        </g>
+      </svg>
+      <div class="mlist">
+        <div class="mrow"><b class="n">1</b><div><h3>Before you touch a patient</h3><p><b>Nurse:</b> before pulse or BP. <b>Attender:</b> before you help a patient to move.</p></div></div>
+        <div class="mrow"><b class="n">2</b><div><h3>Before a clean or aseptic task</h3><p><b>Nurse:</b> before an injection, dressing or catheter. <b>Attender:</b> before mouth care or food.</p></div></div>
+        <div class="mrow"><b class="n">3</b><div><h3>After body fluid risk</h3><p><b>Nurse:</b> after you take blood or remove a dressing. <b>Attender:</b> after you clean urine or faeces. Also after you remove gloves.</p></div></div>
+        <div class="mrow"><b class="n">4</b><div><h3>After you touch a patient</h3><p><b>Nurse:</b> after an examination. <b>Attender:</b> after you help a patient to move.</p></div></div>
+        <div class="mrow"><b class="n">5</b><div><h3>After you touch the patient's area</h3><p><b>Nurse:</b> after you adjust the drip rate. <b>Attender:</b> after you change an empty bed. Do this also if you did not touch the patient.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="4.2 Select the correct PPE">
+  <div class="eyebrow"><span class="part">Module 4 · 4.2 PPE</span><span>Guidebook p. 93–101, Table 16</span></div>
+  <h2>Select the correct PPE for the task</h2>
+  <div class="body dense">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Task</th><th>Gloves</th><th>Other PPE</th></tr></thead>
+      <tbody>
+        <tr><td>Routine help to a patient (no body fluid)</td><td>No gloves necessary</td><td>—</td></tr>
+        <tr><td>Touch blood, body fluid, urine or a sample</td><td>Examination gloves (clean, non-sterile)</td><td>Apron if fluid can splash</td></tr>
+        <tr><td>Cleaning of floors, toilets and surfaces</td><td>Utility (heavy-duty) gloves</td><td>Apron · gum boots in wet areas</td></tr>
+        <tr><td>Waste handling and transport</td><td>Utility (heavy-duty) gloves</td><td>Gum boots · mask · eye protection · apron</td></tr>
+        <tr><td>Spill cleaning</td><td>Utility (heavy-duty) gloves</td><td>Apron · mask · shoe covers</td></tr>
+        <tr><td>Patient with TB or measles (airborne)</td><td>As for the task</td><td>N95 mask</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ul class="rules">
+      <li class="dont"><span>Do not use examination gloves for cleaning. They tear easily.</span></li>
+      <li class="dont"><span>Do not use disposable gloves again. Do not share PPE.</span></li>
+      <li class="dont"><span>Do not touch your face or mask with dirty gloves.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.2 Donning and doffing">
+  <div class="eyebrow"><span class="part">Module 4 · 4.2 PPE</span><span>Guidebook p. 96–101 · CDC sequence</span></div>
+  <h2>Put on and remove PPE in the correct order</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div class="box">
+        <h3>Donning (put on)</h3>
+        <ol class="steps">
+          <li><span>Clean your hands.</span></li>
+          <li><span>Put on the gown or apron. Tie it at the neck and waist.</span></li>
+          <li><span>Put on the mask. Press the metal strip on your nose.</span></li>
+          <li><span>Put on goggles or face shield.</span></li>
+          <li><span>Put on gloves. Pull them over the cuffs of the gown.</span></li>
+        </ol>
+      </div>
+      <div class="box">
+        <h3>Doffing (remove)</h3>
+        <ol class="steps">
+          <li><span>Remove the gloves. Do not touch the outside with bare skin.</span></li>
+          <li><span>Remove goggles or face shield by the strap.</span></li>
+          <li><span>Remove the gown. Roll it inside out, away from your body.</span></li>
+          <li><span>Remove the mask by the ties or ear loops. Do not touch the front.</span></li>
+          <li><span>Clean your hands.</span></li>
+        </ol>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="warn"><span>The outside of used PPE is dirty. Remove the dirtiest items first.</span></li>
+      <li class="do"><span>Wash utility gloves with soap and water before you remove them. Discard used disposable PPE in the correct bag.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.3 Sharps safety">
+  <div class="eyebrow"><span class="part">Module 4 · 4.3 Sharps</span><span>Guidebook p. 61–62</span></div>
+  <h2>Sharps safety</h2>
+  <div class="body">
+    <div class="callout dont"><svg class="sg"><use href="#sg-dont"/></svg><span><b class="label">Never recap</b>Do not put the cap back on a used needle with two hands. Most needle-stick injuries occur during recapping.</span></div>
+    <div class="cols">
+      <ul class="rules">
+        <li class="dont"><span>Do not bend or break needles.</span></li>
+        <li class="dont"><span>Do not give sharps to another person by hand.</span></li>
+        <li class="dont"><span>Do not walk with sharps in your hand.</span></li>
+        <li class="dont"><span>Do not leave sharps on beds, trays or floors.</span></li>
+      </ul>
+      <ul class="rules">
+        <li class="do"><span>Cut the needle with the needle cutter immediately after use.</span></li>
+        <li class="do"><span>Put sharps in the white container at the place of use.</span></li>
+        <li class="do"><span>Pick up broken glass with forceps, tongs or a brush and dust pan.</span></li>
+        <li class="do"><span>If a patient is agitated, get help before you use sharps.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="4.3 Needle-stick injury: first aid">
+  <div class="eyebrow"><span class="part">Module 4 · 4.3 NSI</span><span>Guidebook p. 63–64, Table 12</span></div>
+  <h2>Needle-stick injury or splash: first aid now</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box">
+        <h3>Skin: cut or prick</h3>
+        <ul class="rules">
+          <li class="do"><span>Remove the gloves.</span></li>
+          <li class="do"><span>Wash the wound immediately with running water and soap.</span></li>
+          <li class="dont"><span>Do not squeeze the wound.</span></li>
+          <li class="dont"><span>Do not scrub.</span></li>
+          <li class="dont"><span>Do not put the finger in your mouth.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Eye</h3>
+        <ul class="rules">
+          <li class="do"><span>Flush the eye immediately with clean water or normal saline.</span></li>
+          <li class="do"><span>Keep contact lenses in while you flush. Then remove them.</span></li>
+          <li class="dont"><span>Do not put soap or disinfectant in the eye.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Mouth</h3>
+        <ul class="rules">
+          <li class="do"><span>Spit out the fluid immediately.</span></li>
+          <li class="do"><span>Rinse with water or saline. Spit again. Do this several times.</span></li>
+          <li class="dont"><span>Do not use soap or disinfectant in the mouth.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout dont"><svg class="sg"><use href="#sg-dont"/></svg><span>Do not put bleach, alcohol, betadine or other antiseptics on the wound. Do not panic.</span></div>
+  </div>
+</section>
+
+<section class="slide" data-title="4.3 Reporting and PEP">
+  <div class="eyebrow"><span class="part">Module 4 · 4.3 NSI</span><span>Guidebook p. 64–66</span></div>
+  <h2>Report immediately: post-exposure prophylaxis (PEP)</h2>
+  <div class="body dense">
+    <div class="timeline">
+      <div class="hot"><b>0 hours</b>Do first aid. Tell your supervisor.</div>
+      <div class="hot"><b>2 hours</b>Best time to start PEP for HIV.</div>
+      <div><b>24 hours</b>Start Hepatitis B treatment before this time.</div>
+      <div><b>72 hours</b>After this time, HIV PEP does not work.</div>
+    </div>
+    <div class="cols">
+      <ol class="steps">
+        <li><span>Tell the ward sister or your supervisor immediately.</span></li>
+        <li><span>Go to the casualty medical officer or the designated doctor.</span></li>
+        <li><span>Tell the doctor which patient the needle or blood came from, if you know.</span></li>
+        <li><span>The doctor examines the risk and decides about PEP.</span></li>
+        <li><span>Fill in the needle-stick injury report form.</span></li>
+        <li><span>Go to all follow-up visits and tests.</span></li>
+      </ol>
+      <ul class="rules">
+        <li class="info"><span>Not every injury needs medicine. The doctor decides.</span></li>
+        <li class="info"><span>Your test results stay confidential.</span></li>
+        <li class="do"><span>Report every injury, also a small one.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 5 ============ -->
+<section class="slide divider" data-title="Module 5: Practical session">
+  <div class="num">5</div>
+  <h2>Practical demonstration, assessment and questions</h2>
+  <p>Hand hygiene skill check. Spill kit role-play. Colour-code spotter and quiz.</p>
+  <p class="when">20 minutes</p>
+</section>
+
+<section class="slide" data-title="5.1 Hand hygiene skill check">
+  <div class="eyebrow"><span class="part">Module 5 · Skill check 1</span><span>Work in pairs: one person does, one person observes</span></div>
+  <h2>Skill check 1: hand hygiene</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div class="box">
+        <h3>Observer checklist</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="hh0"><span>No rings or watch. Nails short.</span></label></li>
+          <li><label><input type="checkbox" id="hh1"><span>Step 1: palm to palm</span></label></li>
+          <li><label><input type="checkbox" id="hh2"><span>Step 2: palm over back of hand, fingers interlaced</span></label></li>
+          <li><label><input type="checkbox" id="hh3"><span>Step 3: palm to palm, fingers interlaced</span></label></li>
+          <li><label><input type="checkbox" id="hh4"><span>Step 4: backs of fingers in the other palm</span></label></li>
+          <li><label><input type="checkbox" id="hh5"><span>Step 5: thumbs, in a circle</span></label></li>
+          <li><label><input type="checkbox" id="hh6"><span>Step 6: fingertips in the palm, in a circle</span></label></li>
+          <li><label><input type="checkbox" id="hh7"><span>Correct time: rub 20–30 s, or wash 40–60 s</span></label></li>
+        </ul>
+      </div>
+      <ul class="rules">
+        <li class="do"><span>Do the six steps with hand rub. The observer watches and ticks each step.</span></li>
+        <li class="do"><span>Change roles. Do it again.</span></li>
+        <li class="info"><span>Tip for the trainer: put a little coloured paint or a fluorescent lotion on the hands. Areas that stay clean show missed areas: usually thumbs, fingertips and the backs of the hands.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="5.2 Spill kit role-play">
+  <div class="eyebrow"><span class="part">Module 5 · Skill check 2</span><span>Groups of three: responder, helper, observer</span></div>
+  <h2>Skill check 2: spill kit role-play</h2>
+  <div class="body dense">
+    <div class="scenario"><b class="label">Scenario</b>A blood sample tube breaks in the ward corridor. Approximately 30 ml of blood and some glass pieces are on the floor. Patients are near.</div>
+    <div class="cols">
+      <div class="box">
+        <h3>Observer checklist</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="sp1"><span>Closed off the area. Kept people away.</span></label></li>
+          <li><label><input type="checkbox" id="sp2"><span>Got the spill kit. Put on utility gloves, apron, mask, shoe covers.</span></label></li>
+          <li><label><input type="checkbox" id="sp3"><span>Picked up glass with forceps into a puncture-proof container.</span></label></li>
+          <li><label><input type="checkbox" id="sp4"><span>Covered the spill with absorbent paper.</span></label></li>
+          <li><label><input type="checkbox" id="sp5"><span>Used 10% hypochlorite (large spill). Waited 5 minutes.</span></label></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>&nbsp;</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="sp6"><span>Put waste in the yellow bag.</span></label></li>
+          <li><label><input type="checkbox" id="sp7"><span>Wiped and mopped. Let the floor dry naturally.</span></label></li>
+          <li><label><input type="checkbox" id="sp8"><span>Removed PPE in the correct order. Cleaned hands.</span></label></li>
+          <li><label><input type="checkbox" id="sp9"><span>Told the supervisor. Filled the spill kit again.</span></label></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="5.3 Colour-code spotter">
+  <div class="eyebrow"><span class="part">Module 5 · Spotter</span><span>Show the real item. Ask: which bin? Then show the answer.</span></div>
+  <h2>Spotter: which bin?</h2>
+  <div class="body">
+    <div class="spot">
+      <div class="q"><p class="item">Used syringe with fixed needle</p><button type="button" id="sp-a">Show answer</button><p class="ans" hidden><span class="tag w">White</span>sharps container</p></div>
+      <div class="q"><p class="item">Broken ampoule</p><button type="button" id="sp-b">Show answer</button><p class="ans" hidden><span class="tag b">Blue</span>glassware box</p></div>
+      <div class="q"><p class="item">Used IV set</p><button type="button" id="sp-c">Show answer</button><p class="ans" hidden><span class="tag r">Red</span>cut the needle first: needle to white</p></div>
+      <div class="q"><p class="item">Blood-soaked cotton</p><button type="button" id="sp-d">Show answer</button><p class="ans" hidden><span class="tag y">Yellow</span>soiled waste</p></div>
+      <div class="q"><p class="item">Expired tablets</p><button type="button" id="sp-e">Show answer</button><p class="ans" hidden><span class="tag y">Yellow</span>discarded medicines</p></div>
+      <div class="q"><p class="item">Urine bag and catheter</p><button type="button" id="sp-f">Show answer</button><p class="ans" hidden><span class="tag r">Red</span>contaminated plastic</p></div>
+      <div class="q"><p class="item">Used scalpel blade</p><button type="button" id="sp-g">Show answer</button><p class="ans" hidden><span class="tag w">White</span>sharps container</p></div>
+      <div class="q"><p class="item">Placenta</p><button type="button" id="sp-h">Show answer</button><p class="ans" hidden><span class="tag y">Yellow</span>anatomical waste</p></div>
+      <div class="q"><p class="item">Empty glass medicine vial</p><button type="button" id="sp-i">Show answer</button><p class="ans" hidden><span class="tag b">Blue</span>glassware box</p></div>
+      <div class="q"><p class="item">Used examination gloves</p><button type="button" id="sp-j">Show answer</button><p class="ans" hidden><span class="tag r">Red</span>contaminated plastic</p></div>
+      <div class="q"><p class="item">Leftover food</p><button type="button" id="sp-k">Show answer</button><p class="ans" hidden><span class="tag g">Green</span>general, biodegradable</p></div>
+      <div class="q"><p class="item">Clean paper packaging</p><button type="button" id="sp-l">Show answer</button><p class="ans" hidden><span class="tag g">Black / green</span>general waste</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="5.4 Quick quiz">
+  <div class="eyebrow"><span class="part">Module 5 · Quiz</span><span>Discuss each question, then show the answer</span></div>
+  <h2>Quick quiz</h2>
+  <div class="body">
+    <div class="quiz">
+      <div class="q"><b class="n">Question 1</b><p>Which hypochlorite strength do you use for a large blood spill?</p><button type="button" id="q1">Show answer</button><p class="ans" hidden>10% (5000 ppm). Wait 5 minutes.</p></div>
+      <div class="q"><b class="n">Question 2</b><p>Which three buckets do you use, in which order?</p><button type="button" id="q2">Show answer</button><p class="ans" hidden>Detergent water, clean water (rinse), disinfectant.</p></div>
+      <div class="q"><b class="n">Question 3</b><p>A needle pricks your finger. What do you do first?</p><button type="button" id="q3">Show answer</button><p class="ans" hidden>Wash with running water and soap. Do not squeeze or scrub. Then report.</p></div>
+      <div class="q"><b class="n">Question 4</b><p>In which direction do you clean a room?</p><button type="button" id="q4">Show answer</button><p class="ans" hidden>Top to bottom, clean to dirty, inside to the door.</p></div>
+      <div class="q"><b class="n">Question 5</b><p>When do you replace a waste bag?</p><button type="button" id="q5">Show answer</button><p class="ans" hidden>When it is 3/4 full.</p></div>
+      <div class="q"><b class="n">Question 6</b><p>Which PPE item do you remove first?</p><button type="button" id="q6">Show answer</button><p class="ans" hidden>The gloves. Clean your hands at the end.</p></div>
+      <div class="q"><b class="n">Question 7</b><p>Can you use the ICU mop in the corridor?</p><button type="button" id="q7">Show answer</button><p class="ans" hidden>No. Critical areas and general areas have different mops.</p></div>
+      <div class="q"><b class="n">Question 8</b><p>Within how many hours is HIV PEP best started?</p><button type="button" id="q8">Show answer</button><p class="ans" hidden>Within 2 hours. It does not work after 72 hours.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Ten rules to remember">
+  <div class="eyebrow"><span class="part">Summary</span><span>Questions and answers</span></div>
+  <h2>Ten rules to remember</h2>
+  <div class="body dense">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>Clean your hands at the five moments. Use the six steps.</span></li>
+        <li><span>Clean top to bottom, clean to dirty, inside out.</span></li>
+        <li><span>Use the three-bucket system. Never use a broom in patient areas.</span></li>
+        <li><span>Measure bleach. 1% for surfaces, 10% for large spills.</span></li>
+        <li><span>Wash, disinfect and dry mops every day.</span></li>
+      </ol>
+      <ol class="steps" style="counter-reset:s 5">
+        <li><span>Separate waste at source: yellow, red, blue, white, black or green.</span></li>
+        <li><span>Replace bags at 3/4 full. Tie, label and bar-code them.</span></li>
+        <li><span>Large spill: cover, flood with 10%, wait 5 minutes.</span></li>
+        <li><span>Never recap a needle with two hands.</span></li>
+        <li><span>Needle-stick injury: wash, report, see the doctor within 2 hours.</span></li>
+      </ol>
+    </div>
+    <div class="callout info"><svg class="sg"><use href="#sg-info"/></svg><span>If you are not sure about a rule, stop and ask your supervisor or the infection control nurse.</span></div>
+  </div>
+</section>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+</main>
+</div>
+
+<nav class="bar" aria-label="Slide controls">
+  <a class="home" href="index.html">← Home</a>
+  <button type="button" id="prev" aria-label="Previous slide">← Back</button>
+  <span class="count" id="count">1 / 41</span>
+  <button type="button" id="next" aria-label="Next slide">Next →</button>
+  <button type="button" id="ovBtn">All slides</button>
+  <button type="button" id="fsBtn">Full screen</button>
+</nav>
+</div>
+
+<div class="overview" id="overview" hidden>
+  <header><h2>All slides</h2><button type="button" id="ovClose">Close</button></header>
+  <ol id="ovList"></ol>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  // Add a sign to each rule line from its class.
+  document.querySelectorAll('ul.rules > li').forEach(function(li){
+    var t=['do','dont','warn','info'].find(function(c){return li.classList.contains(c)})||'do';
+    var svg=document.createElementNS(NS,'svg'); svg.setAttribute('class','sg'); svg.setAttribute('aria-hidden','true');
+    var use=document.createElementNS(NS,'use'); use.setAttribute('href','#sg-'+t); svg.appendChild(use);
+    li.insertBefore(svg,li.firstChild);
+    var sr=document.createElement('span'); sr.className='sr';
+    sr.textContent={do:'Do: ',dont:'Do not: ',warn:'Warning: ',info:'Information: '}[t];
+    li.querySelector('span').prepend(sr);
+  });
+
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var count=document.getElementById('count'), prog=document.getElementById('progress');
+  var cur=0, N=slides.length;
+  function show(i){
+    cur=Math.max(0,Math.min(N-1,i));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+    count.textContent=(cur+1)+' / '+N;
+    prog.style.width=((cur+1)/N*100)+'%';
+    try{history.replaceState(null,'','#s'+(cur+1))}catch(e){}
+  }
+  var m=/^#s(\d+)$/.exec(location.hash||'');
+  show(m?parseInt(m[1],10)-1:0);
+
+  document.getElementById('prev').onclick=function(){show(cur-1)};
+  document.getElementById('next').onclick=function(){show(cur+1)};
+
+  var ov=document.getElementById('overview'), ovList=document.getElementById('ovList');
+  slides.forEach(function(s,k){
+    var li=document.createElement('li'), b=document.createElement('button'); b.type='button';
+    var n=document.createElement('b'); n.textContent=k+1; b.appendChild(n);
+    b.appendChild(document.createTextNode(s.getAttribute('data-title')||''));
+    b.onclick=function(){ov.hidden=true; show(k)};
+    li.appendChild(b); ovList.appendChild(li);
+  });
+  document.getElementById('ovBtn').onclick=function(){ov.hidden=false; ovList.querySelectorAll('button')[cur].focus()};
+  document.getElementById('ovClose').onclick=function(){ov.hidden=true};
+
+  document.getElementById('fsBtn').onclick=function(){
+    try{
+      if(document.fullscreenElement){document.exitFullscreen().catch(function(){})}
+      else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().catch(function(){})}
+    }catch(e){}
+  };
+
+  document.addEventListener('keydown',function(e){
+    if(!ov.hidden){ if(e.key==='Escape') ov.hidden=true; return; }
+    if(e.target && (e.target.tagName==='BUTTON'||e.target.tagName==='INPUT') && (e.key===' '||e.key==='Enter')) return;
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>-1){e.preventDefault(); show(cur+1)}
+    else if(['ArrowLeft','PageUp'].indexOf(e.key)>-1){e.preventDefault(); show(cur-1)}
+    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(N-1)}
+  });
+
+  var sx=null;
+  var stage=document.getElementById('stage');
+  stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+  stage.addEventListener('touchend',function(e){
+    if(sx===null) return; var dx=e.changedTouches[0].clientX-sx; sx=null;
+    if(window.matchMedia('(max-width:760px)').matches) return;
+    if(Math.abs(dx)>50) show(cur+(dx<0?1:-1));
+  });
+
+  document.querySelectorAll('.q button').forEach(function(b){
+    b.onclick=function(){
+      var a=b.nextElementSibling; a.hidden=!a.hidden;
+      b.textContent=a.hidden?'Show answer':'Hide answer';
+    };
+  });
+})();
+</script>
+
+</body>
+</html>

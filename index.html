@@ -1,0 +1,119 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Clean and Safe Hospital</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@600;700&family=Noto+Serif+Malayalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centred column; a brand band on top, two deck cards, then a short how-to. */
+:root{
+  --paper:#EEF2EF; --panel:#FFFFFF; --ink:#13222A; --ink-2:#4B5C64; --rule:#CCD6D1;
+  --brand:#0D5F52; --brand-soft:#DCEDE8; --on-strong:#FFFFFF; --do:#0A5DA6;
+  --bin-yellow:#F2C200; --bin-red:#C9302C; --bin-white:#FFFFFF; --bin-blue:#1D5FB4; --bin-black:#1A1A1A;
+  --display:"Barlow Condensed","Noto Serif Malayalam","Arial Narrow",Arial,sans-serif;
+  --body:"Atkinson Hyperlegible","Noto Serif Malayalam",Verdana,sans-serif;
+  --ml:"Noto Serif Malayalam",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1619; --panel:#16232A; --ink:#E6EEEA; --ink-2:#A3B4AD; --rule:#2B3C44;
+    --brand:#5CC4AE; --brand-soft:#173A35; --on-strong:#0E1619; --do:#5AA5EC;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1619; --panel:#16232A; --ink:#E6EEEA; --ink-2:#A3B4AD; --rule:#2B3C44;
+  --brand:#5CC4AE; --brand-soft:#173A35; --on-strong:#0E1619; --do:#5AA5EC;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band{background:var(--brand);color:var(--on-strong)}
+.band .wrap{padding-block:40px 0}
+.eyebrow{font:600 15px/1.3 var(--display);letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.eyebrow .ml{font-family:var(--ml);letter-spacing:0;text-transform:none}
+h1{font:700 clamp(38px,6vw,64px)/1 var(--display);margin:10px 0 6px;text-wrap:balance}
+.h1ml{font:700 clamp(22px,3.2vw,32px)/1.35 var(--ml);margin:0 0 18px}
+.lead{max-width:60ch;margin:0 0 28px;opacity:.95}
+.binband{display:flex;height:10px;margin-top:8px}
+.binband span{flex:1}
+main{padding-block:32px 48px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card .lang{font:700 14px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
+.card h2{font:700 30px/1.1 var(--display);margin:0;text-wrap:balance}
+.card.ml h2{font:700 25px/1.4 var(--ml)}
+.card p{margin:0;color:var(--ink-2)}
+.card.ml p{font-family:var(--ml);font-size:16px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font:600 15px/1.3 var(--display);letter-spacing:.04em;color:var(--ink-2);text-transform:uppercase}
+.btn{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:10px;background:var(--brand);color:var(--on-strong);text-decoration:none;font:700 18px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;padding:14px 20px;border-radius:4px}
+.card.ml .btn{font-family:var(--ml);letter-spacing:0;text-transform:none;font-size:17px}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible{outline:3px solid var(--do);outline-offset:3px}
+h3{font:700 22px/1.2 var(--display);margin:40px 0 12px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.modules{list-style:none;margin:0;padding:0;display:grid}
+.modules li{display:grid;grid-template-columns:44px 1fr 90px;gap:12px;align-items:baseline;border-bottom:1px solid var(--rule);padding:10px 0}
+.modules li > *{min-width:0}
+.modules b.n{font:700 28px/1 var(--display);color:var(--brand)}
+.modules .t{font-weight:700}
+.modules .t small{display:block;font:400 15px/1.4 var(--ml);color:var(--ink-2)}
+.modules .min{font:700 20px/1 var(--display);text-align:right;font-variant-numeric:tabular-nums}
+.howto{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.howto div{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:16px;min-width:0}
+.howto b{display:block;font:700 18px/1.2 var(--display);margin-bottom:4px}
+footer{color:var(--ink-2);font-size:14px;border-top:1px solid var(--rule);padding-top:16px;margin-top:40px}
+@media (max-width:760px){
+  .cards,.howto{grid-template-columns:1fr}
+  .modules li{grid-template-columns:34px 1fr 64px}
+}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <div class="eyebrow">Taluk Headquarters Hospital, Peermade · <span class="ml">താലൂക്ക് ഹെഡ്ക്വാർട്ടേഴ്സ് ആശുപത്രി, പീരുമേട്</span></div>
+    <h1>Keeping Our Hospital Clean and Safe</h1>
+    <p class="h1ml">നമ്മുടെ ആശുപത്രി വൃത്തിയും സുരക്ഷിതവുമായി സൂക്ഷിക്കാം</p>
+    <p class="lead">Training for staff nurses and hospital attenders on cleaning, biomedical waste, spills and infection control. Based on the Kayakalp implementation guidebook.</p>
+  </div>
+  <div class="binband" aria-hidden="true"><span style="background:var(--bin-yellow)"></span><span style="background:var(--bin-red)"></span><span style="background:var(--bin-white)"></span><span style="background:var(--bin-blue)"></span><span style="background:var(--bin-black)"></span></div>
+</div>
+
+<main class="wrap">
+  <div class="cards">
+    <section class="card">
+      <span class="lang">English</span>
+      <h2>Training slides in English</h2>
+      <p>Written in simple English with sign marks for "do", "do not" and "warning".</p>
+      <div class="meta"><span>41 slides</span><span>5 modules</span></div>
+      <a class="btn" href="en.html">Open English slides →</a>
+    </section>
+    <section class="card ml" lang="ml">
+      <span class="lang">മലയാളം</span>
+      <h2>മലയാളത്തിലുള്ള പരിശീലന സ്ലൈഡുകൾ</h2>
+      <p>ലളിതമായ മലയാളത്തിൽ. ചെയ്യേണ്ടത്, ചെയ്യരുതാത്തത്, മുന്നറിയിപ്പ് എന്നിവയ്ക്ക് അടയാളങ്ങളോടെ.</p>
+      <div class="meta"><span>41 സ്ലൈഡുകൾ</span><span>5 മൊഡ്യൂളുകൾ</span></div>
+      <a class="btn" href="ml.html">മലയാളം സ്ലൈഡുകൾ തുറക്കുക →</a>
+    </section>
+  </div>
+
+  <h3>What the training covers</h3>
+  <ol class="modules">
+    <li><b class="n">1</b><span class="t">Hospital cleanliness and environmental hygiene<small>ആശുപത്രി ശുചിത്വവും പരിസര ശുചിത്വവും</small></span><span class="min">40 min</span></li>
+    <li><b class="n">2</b><span class="t">Biomedical waste management<small>ബയോമെഡിക്കൽ മാലിന്യ പരിപാലനം</small></span><span class="min">40 min</span></li>
+    <li><b class="n">3</b><span class="t">Spill management<small>സ്പിൽ കൈകാര്യം ചെയ്യൽ</small></span><span class="min">40 min</span></li>
+    <li><b class="n">4</b><span class="t">Infection prevention, control and staff safety<small>അണുബാധ പ്രതിരോധം, നിയന്ത്രണം, ജീവനക്കാരുടെ സുരക്ഷ</small></span><span class="min">40 min</span></li>
+    <li><b class="n">5</b><span class="t">Practical demonstration, assessment and questions<small>പ്രായോഗിക പ്രദർശനം, വിലയിരുത്തൽ, ചോദ്യങ്ങൾ</small></span><span class="min">20 min</span></li>
+  </ol>
+
+  <h3>How to use the slides</h3>
+  <div class="howto">
+    <div><b>On a computer or projector</b>Use the arrow keys or the Next and Back buttons. Press Full screen for the training hall.</div>
+    <div><b>On a phone</b>The slides show as one long page. Scroll down to read them all.</div>
+    <div><b>Find a slide</b>Press "All slides" to see the list and go to any slide.</div>
+  </div>
+
+  <footer>Source: Implementation Guidebook for Kayakalp (Sections B–D), BMW Management Rules 2016 and 2018, WHO guidelines on hand hygiene. If you are not sure about a rule, ask your supervisor or the infection control nurse.</footer>
+</main>
+
+</body></html>

@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>കായകല്പ് പരിശീലനം</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@500;600;700&family=Noto+Serif+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: a 16:9 projector stage sized with container units; below 760px it becomes a scrolling handout.
+   Sign system: ISO-style marks — blue = do, red = do not, yellow = warning, green = information. */
+:root{
+  --paper:#EEF2EF; --panel:#FFFFFF; --ink:#13222A; --ink-2:#4B5C64; --rule:#CCD6D1;
+  --brand:#0D5F52; --brand-soft:#DCEDE8; --on-strong:#FFFFFF;
+  --do:#0A5DA6; --do-soft:#E2ECF7;
+  --dont:#C2272D; --dont-soft:#FBE5E4;
+  --warn:#F2C200; --warn-soft:#FFF5CC;
+  --info:#17784C; --info-soft:#E0F1E7;
+  --bin-yellow:#F2C200; --bin-red:#C9302C; --bin-white:#FFFFFF; --bin-blue:#1D5FB4; --bin-green:#2E7D32;
+  --sign-ink:#1A1A1A;
+  --display:"Barlow Condensed","Noto Serif Malayalam","Arial Narrow",Arial,serif;
+  --body:"Atkinson Hyperlegible","Noto Serif Malayalam",Verdana,"Segoe UI",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1619; --panel:#16232A; --ink:#E6EEEA; --ink-2:#A3B4AD; --rule:#2B3C44;
+    --brand:#5CC4AE; --brand-soft:#173A35; --on-strong:#0E1619;
+    --do:#5AA5EC; --do-soft:#15293C; --dont:#F06A66; --dont-soft:#3A1D1F;
+    --warn:#F2C94C; --warn-soft:#3A3215; --info:#47BC86; --info-soft:#13301F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1619; --panel:#16232A; --ink:#E6EEEA; --ink-2:#A3B4AD; --rule:#2B3C44;
+  --brand:#5CC4AE; --brand-soft:#173A35; --on-strong:#0E1619;
+  --do:#5AA5EC; --do-soft:#15293C; --dont:#F06A66; --dont-soft:#3A1D1F;
+  --warn:#F2C94C; --warn-soft:#3A3215; --info:#47BC86; --info-soft:#13301F;
+  color-scheme:dark;
+}
+html{box-sizing:border-box;height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+
+.deck{height:100%;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 0}
+.viewport{flex:1;min-height:0;container-type:size;display:grid;place-items:center}
+.stage{--u:1cqw;width:min(100cqw,calc(100cqh * 16 / 9));aspect-ratio:16/9;container-type:size;position:relative;background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden;box-shadow:0 1px 0 var(--rule)}
+
+.slide{position:absolute;inset:0;display:none;flex-direction:column;gap:calc(var(--u)*1.5);padding:calc(var(--u)*2.8) calc(var(--u)*3.8) calc(var(--u)*2.4);font-size:calc(var(--u)*1.85);line-height:1.34}
+.slide.active{display:flex}
+.eyebrow{display:flex;justify-content:space-between;gap:1em;font:600 calc(var(--u)*1.12)/1.1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);border-bottom:2px solid var(--ink);padding-bottom:calc(var(--u)*.7)}
+.eyebrow .part{color:var(--brand)}
+h2{font:700 calc(var(--u)*3.3)/1.02 var(--display);margin:0;text-wrap:balance}
+h3{font:700 calc(var(--u)*1.8)/1.1 var(--display);margin:0 0 calc(var(--u)*.7);text-wrap:balance}
+p{margin:0}
+.lead{font-size:calc(var(--u)*2);max-width:62ch}
+.body{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:calc(var(--u)*1.3)}
+.dense{font-size:calc(var(--u)*1.62)}
+.xdense{font-size:calc(var(--u)*1.48)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2.4);align-items:start}
+.cols > *{min-width:0}
+.cols.wide-left{grid-template-columns:1.25fr 1fr}
+.cols.three{grid-template-columns:repeat(3,1fr)}
+.box{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:calc(var(--u)*1.2) calc(var(--u)*1.4)}
+.muted{color:var(--ink-2)}
+.small{font-size:.86em}
+b,strong{font-weight:700}
+
+/* Sign-marked rule lists */
+ul.rules{list-style:none;margin:0;padding:0;display:grid;gap:calc(var(--u)*.7)}
+ul.rules li{display:grid;grid-template-columns:calc(var(--u)*1.85) 1fr;column-gap:calc(var(--u)*.85);align-items:start}
+ul.rules li > span{min-width:0}
+svg.sg{width:calc(var(--u)*1.85);height:calc(var(--u)*1.85);margin-top:calc(var(--u)*.02)}
+/* Numbered procedure steps: blue mandatory discs carry the step number */
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;gap:calc(var(--u)*.65)}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:calc(var(--u)*1.95) 1fr;column-gap:calc(var(--u)*.85);align-items:start}
+ol.steps li::before{content:counter(s);display:grid;place-items:center;width:calc(var(--u)*1.95);height:calc(var(--u)*1.95);border-radius:50%;background:var(--do);color:var(--on-strong);font:700 calc(var(--u)*1.25)/1 var(--display);font-variant-numeric:tabular-nums}
+ol.steps li > span{min-width:0}
+
+.callout{display:grid;grid-template-columns:calc(var(--u)*2.4) 1fr;gap:calc(var(--u)*1);align-items:start;border:2px solid var(--warn);background:var(--warn-soft);border-radius:4px;padding:calc(var(--u)*1) calc(var(--u)*1.3)}
+.callout svg.sg{width:calc(var(--u)*2.4);height:calc(var(--u)*2.4)}
+.callout.dont{border-color:var(--dont);background:var(--dont-soft)}
+.callout.info{border-color:var(--info);background:var(--info-soft)}
+.callout.do{border-color:var(--do);background:var(--do-soft)}
+.callout b.label{font:700 1.02em/1 var(--display);letter-spacing:.06em;text-transform:uppercase;margin-right:.35em}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;flex:none}
+table.tbl.compact{font-size:calc(var(--u)*1.32)}
+.tbl.compact td{padding:calc(var(--u)*.4) calc(var(--u)*.6)}
+table.tbl{width:100%;border-collapse:collapse;font-size:calc(var(--u)*1.5);font-variant-numeric:tabular-nums}
+.tbl th{font:600 calc(var(--u)*1.12)/1.15 var(--display);letter-spacing:.06em;text-transform:uppercase;text-align:left;color:var(--ink-2);border-bottom:2px solid var(--ink);padding:calc(var(--u)*.45) calc(var(--u)*.7)}
+.tbl td{border-bottom:1px solid var(--rule);padding:calc(var(--u)*.5) calc(var(--u)*.7);vertical-align:top}
+.tbl td.num{font:700 calc(var(--u)*1.6)/1.1 var(--display);white-space:nowrap}
+.chip{display:inline-block;font:700 calc(var(--u)*1.05)/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:calc(var(--u)*.3) calc(var(--u)*.55);border-radius:3px;white-space:nowrap}
+.chip.high{background:var(--dont);color:var(--on-strong)}
+.chip.mod{background:var(--warn);color:var(--sign-ink)}
+.chip.low{background:var(--info);color:var(--on-strong)}
+
+/* Title + dividers */
+.slide.title{background:var(--brand);color:var(--on-strong);justify-content:space-between}
+.slide.title .eyebrow{color:inherit;border-color:currentColor;opacity:.9}
+.slide.title h1{font:700 calc(var(--u)*6.2)/.95 var(--display);margin:0;max-width:16ch;text-wrap:balance;letter-spacing:-.01em}
+.slide.title .sub{font-size:calc(var(--u)*1.9);max-width:46ch;margin-top:calc(var(--u)*1.4)}
+.slide.title .meta{display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*.35) calc(var(--u)*1.4);font-size:calc(var(--u)*1.25)}
+.slide.title .meta dt{font:600 calc(var(--u)*1.1)/1.3 var(--display);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.slide.title .meta dd{margin:0}
+.binband{display:flex;height:calc(var(--u)*1.2);margin:calc(var(--u)*1.2) calc(var(--u)*-3.8) calc(var(--u)*-2.4)}
+.binband span{flex:1}
+.slide.divider{background:var(--brand-soft);justify-content:center}
+.slide.divider .num{font:700 calc(var(--u)*11)/.85 var(--display);color:var(--brand)}
+.slide.divider h2{font-size:calc(var(--u)*5)}
+.slide.divider p{font-size:calc(var(--u)*1.8);max-width:52ch;margin-top:calc(var(--u)*1)}
+
+/* Sign key */
+.signkey{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*1.4)}
+.signkey > div{display:flex;flex-direction:column;gap:calc(var(--u)*.6);border-top:2px solid var(--ink);padding-top:calc(var(--u)*1)}
+.signkey svg.sg{width:calc(var(--u)*4.4);height:calc(var(--u)*4.4)}
+.signkey b{font:700 calc(var(--u)*1.9)/1 var(--display)}
+
+/* Diagrams */
+svg.diagram{width:100%;height:auto;display:block}
+.d-wall{fill:none;stroke:var(--ink);stroke-width:3}
+.d-bed{fill:var(--paper);stroke:var(--ink-2);stroke-width:1.2}
+.d-path{fill:none;stroke:var(--do);stroke-width:4;stroke-linejoin:round}
+.d-ring{fill:none;stroke:var(--do);stroke-width:2.5;stroke-dasharray:7 6}
+.d-table{fill:var(--info-soft);stroke:var(--info);stroke-width:2}
+.d-t{fill:var(--ink);font:700 15px var(--display)}
+.d-s{fill:var(--ink-2);font:12px var(--body)}
+.d-node{fill:var(--panel);stroke:var(--ink);stroke-width:1.5}
+.d-key{fill:var(--do-soft);stroke:var(--do);stroke-width:3}
+.d-arrow{fill:var(--ink-2)}
+.d-start{fill:var(--do)}
+.d-orbit{fill:none;stroke:var(--rule);stroke-width:3}
+.d-bucket{stroke:var(--ink);stroke-width:2.5}
+.d-liq1{fill:var(--do-soft)} .d-liq2{fill:var(--paper)} .d-liq3{fill:var(--info-soft)}
+.d-handle{fill:none;stroke:var(--ink);stroke-width:2.5}
+
+.buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*2)}
+.buckets > div{display:flex;flex-direction:column;gap:calc(var(--u)*.6)}
+.buckets svg{width:calc(var(--u)*9);height:auto}
+.buckets b.n{font:700 calc(var(--u)*2.2)/1 var(--display);color:var(--do)}
+
+/* Bins */
+.bins{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(var(--u)*1)}
+.bin{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:var(--paper);min-width:0}
+.bin .lid{padding:calc(var(--u)*.8) calc(var(--u)*1);font:700 calc(var(--u)*2.1)/1 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.bin .lid small{display:block;font:600 calc(var(--u)*1.05)/1.2 var(--display);letter-spacing:.06em;margin-top:calc(var(--u)*.3)}
+.bin.y .lid{background:var(--bin-yellow);color:var(--sign-ink)}
+.bin.r .lid{background:var(--bin-red);color:#FFFFFF}
+.bin.w .lid{background:var(--bin-white);color:var(--sign-ink);border-bottom:2px solid var(--sign-ink)}
+.bin.b .lid{background:var(--bin-blue);color:#FFFFFF}
+.bin.g .lid{background:#1A1A1A;color:#FFFFFF}
+.bin ul{margin:0;padding:calc(var(--u)*.8) calc(var(--u)*1) calc(var(--u)*1) calc(var(--u)*2.2);font-size:calc(var(--u)*1.42);display:grid;gap:calc(var(--u)*.3)}
+
+/* Timeline */
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);position:relative;margin-top:calc(var(--u)*.5)}
+.timeline::before{content:"";position:absolute;left:0;right:0;top:calc(var(--u)*1.1);height:3px;background:var(--ink)}
+.timeline > div{position:relative;padding-top:calc(var(--u)*3);padding-right:calc(var(--u)*1)}
+.timeline > div::before{content:"";position:absolute;top:calc(var(--u)*.3);left:0;width:calc(var(--u)*1.8);height:calc(var(--u)*1.8);border-radius:50%;background:var(--panel);border:3px solid var(--ink)}
+.timeline > div.hot::before{background:var(--dont);border-color:var(--dont)}
+.timeline b{display:block;font:700 calc(var(--u)*2.4)/1 var(--display);margin-bottom:calc(var(--u)*.3)}
+
+/* Hand-wash tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1)}
+.tile{border:1px solid var(--rule);border-radius:4px;padding:calc(var(--u)*1) calc(var(--u)*1.2);background:var(--paper);display:flex;gap:calc(var(--u)*1);align-items:flex-start}
+.tile b.n{font:700 calc(var(--u)*3.4)/.85 var(--display);color:var(--do);font-variant-numeric:tabular-nums}
+
+/* Moments */
+.moments{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(var(--u)*.9)}
+.moment{border-top:4px solid var(--do);background:var(--paper);padding:calc(var(--u)*.9) calc(var(--u)*1);display:flex;flex-direction:column;gap:calc(var(--u)*.5);font-size:calc(var(--u)*1.45);min-width:0}
+.moment b.n{font:700 calc(var(--u)*3)/.9 var(--display);color:var(--do)}
+.moment h3{font-size:calc(var(--u)*1.55);margin:0}
+.moment .why{color:var(--ink-2);font-size:.92em}
+
+/* Five moments with plan diagram */
+.cols.mo-layout{grid-template-columns:.78fr 1.7fr;gap:calc(var(--u)*2)}
+.mlist{display:grid;font-size:calc(var(--u)*1.42)}
+.mrow{display:grid;grid-template-columns:calc(var(--u)*2.6) 1fr;gap:calc(var(--u)*.9);border-top:1px solid var(--rule);padding:calc(var(--u)*.55) 0}
+.mrow:last-child{border-bottom:1px solid var(--rule)}
+.mrow > div{min-width:0}
+.mrow b.n{font:700 calc(var(--u)*2.6)/.9 var(--display);color:var(--do)}
+.mrow h3{font-size:calc(var(--u)*1.55);margin:0 0 calc(var(--u)*.2)}
+/* Quiz */
+.quiz{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*1)}
+.q{border:1px solid var(--rule);border-radius:4px;background:var(--paper);padding:calc(var(--u)*1) calc(var(--u)*1.1);display:flex;flex-direction:column;gap:calc(var(--u)*.7);font-size:calc(var(--u)*1.45);min-width:0}
+.q b.n{font:700 calc(var(--u)*1.2)/1 var(--display);letter-spacing:.08em;color:var(--brand);text-transform:uppercase}
+.q button{align-self:flex-start;margin-top:auto}
+.q .ans{border-top:2px solid var(--info);padding-top:calc(var(--u)*.6);font-weight:700}
+
+/* Controls */
+button{font:600 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--panel);border:1.5px solid var(--ink);border-radius:4px;padding:9px 14px;cursor:pointer}
+button:hover{background:var(--brand-soft)}
+button:focus-visible{outline:3px solid var(--do);outline-offset:2px}
+.q button{font-size:calc(var(--u)*1.05);padding:calc(var(--u)*.5) calc(var(--u)*.8)}
+.bar{height:60px;flex:none;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.bar .count{font:700 18px/1 var(--display);min-width:5.5em;text-align:center;font-variant-numeric:tabular-nums}
+.progress{position:absolute;left:0;bottom:0;height:5px;background:var(--brand);transition:width .25s ease}
+.overview{position:fixed;inset:0;z-index:20;background:var(--paper);overflow:auto;padding-block:max(20px,env(safe-area-inset-top,0px)) 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview header{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1100px;margin:0 auto 16px}
+.overview h2{font-size:32px}
+.overview ol{list-style:none;margin:0 auto;padding:0;max-width:1100px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.overview ol button{width:100%;text-align:left;text-transform:none;letter-spacing:0;font:400 15px/1.3 var(--body);display:flex;gap:10px;align-items:baseline;padding:12px}
+.overview ol button b{font:700 18px/1 var(--display);color:var(--brand);min-width:1.6em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Handout mode for phones and narrow windows */
+@media (max-width:760px){
+  body{height:auto}
+  .deck{height:auto;padding-block:16px 32px}
+  .viewport{display:block;container-type:normal}
+  .stage{--u:10px;width:auto;aspect-ratio:auto;container-type:normal;background:none;border:0;box-shadow:none;overflow:visible}
+  .slide{display:flex;position:static;background:var(--panel);border:1px solid var(--rule);border-radius:6px;margin-bottom:16px;padding:20px 16px}
+  .body{overflow:visible}
+  .cols,.cols.wide-left,.cols.three,.buckets,.signkey,.quiz,.tiles{grid-template-columns:1fr}
+  .bins,.moments{grid-template-columns:1fr 1fr}
+  .timeline{grid-template-columns:1fr 1fr;row-gap:16px}
+  .binband{margin:12px -16px -20px}
+  .bar,.progress{display:none}
+}
+@media (prefers-reduced-motion:reduce){.progress{transition:none}}
+/* Agenda */
+.agenda{display:grid}
+.agenda .row{display:grid;grid-template-columns:calc(var(--u)*5) 1fr calc(var(--u)*8);gap:calc(var(--u)*1.4);align-items:center;border-top:1px solid var(--rule);padding:calc(var(--u)*.75) 0}
+.agenda .row:last-child{border-bottom:2px solid var(--ink)}
+.agenda .row > *{min-width:0}
+.agenda b.m{font:700 calc(var(--u)*3.4)/.9 var(--display);color:var(--brand)}
+.agenda h3{margin:0 0 calc(var(--u)*.2)}
+.agenda .min{font:700 calc(var(--u)*2.3)/1 var(--display);text-align:right;font-variant-numeric:tabular-nums}
+.agenda .min small{display:block;font:600 calc(var(--u)*1)/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.agenda .total{display:flex;justify-content:space-between;font:700 calc(var(--u)*1.8)/1 var(--display);padding-top:calc(var(--u)*.8)}
+.slide.divider .when{max-width:none;line-height:1.3;font:600 calc(var(--u)*1.5)/1.3 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-top:calc(var(--u)*1.4)}
+/* Colour tags in answers */
+.tag{display:inline-block;font:700 calc(var(--u)*1.1)/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:calc(var(--u)*.3) calc(var(--u)*.6);border-radius:3px;margin-right:.4em;vertical-align:.08em}
+.tag.y{background:var(--bin-yellow);color:var(--sign-ink)}
+.tag.r{background:var(--bin-red);color:#FFFFFF}
+.tag.w{background:var(--bin-white);color:var(--sign-ink);box-shadow:inset 0 0 0 2px var(--sign-ink)}
+.tag.b{background:var(--bin-blue);color:#FFFFFF}
+.tag.g{background:var(--bin-green);color:#FFFFFF}
+.spot{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*.9)}
+.spot .q{font-size:calc(var(--u)*1.5)}
+.spot .q p.item{font:700 calc(var(--u)*1.9)/1.1 var(--display)}
+.spot .q .ans{font-weight:400}
+/* Observer checklist */
+ul.check{list-style:none;margin:0;padding:0;display:grid;gap:calc(var(--u)*.55)}
+ul.check li label{display:grid;grid-template-columns:calc(var(--u)*2) 1fr;gap:calc(var(--u)*.8);align-items:start;cursor:pointer}
+ul.check input{width:calc(var(--u)*1.7);height:calc(var(--u)*1.7);margin:calc(var(--u)*.1) 0 0;accent-color:var(--info)}
+.scenario{border:2px solid var(--ink);border-radius:4px;padding:calc(var(--u)*1.1) calc(var(--u)*1.4);background:var(--paper)}
+.scenario b.label{font:700 calc(var(--u)*1.2)/1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--brand);display:block;margin-bottom:calc(var(--u)*.4)}
+.d-flow{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
+.d-lock{fill:var(--warn-soft);stroke:var(--ink);stroke-width:2}
+.d-dash{fill:none;stroke:var(--ink-2);stroke-width:2;stroke-dasharray:6 6}
+@media (max-width:760px){
+  .spot{grid-template-columns:1fr 1fr}
+  .agenda .row{grid-template-columns:44px 1fr 64px}
+}
+/* Malayalam: no letter-spacing (it breaks conjunct shaping); taller lines for the script */
+.eyebrow,.chip,.tbl th,.callout b.label,.bin .lid,.bin .lid small,.agenda .min small,.slide.divider .when,.q b.n,.scenario b.label,.signkey b,button,.tag,.slide.title .meta dt{letter-spacing:0 !important}
+.slide{line-height:1.5}
+h2{line-height:1.25}
+h3{line-height:1.3}
+.slide.title h1{font-size:calc(var(--u)*4.6);line-height:1.2;max-width:22ch}
+.slide.divider h2{font-size:calc(var(--u)*3.8)}
+.slide.divider .num{font-family:"Barlow Condensed",sans-serif}
+</style>
+
+<style>.home{font:600 15px/1 var(--display);color:var(--ink);background:var(--panel);border:1.5px solid var(--ink);border-radius:4px;padding:9px 14px;text-decoration:none}.home:hover{background:var(--brand-soft)}.home:focus-visible{outline:3px solid var(--do);outline-offset:2px}.home-top{display:none}@media (max-width:760px){.home-top{display:inline-block;margin:16px 0 0 max(16px,env(safe-area-inset-left,0px))}}</style>
+</head>
+<body>
+<a class="home home-top" href="index.html">← ഹോം</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="sg-do" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11.2" style="fill:var(--do)"/><path d="M6.6 12.4l3.6 3.6 7.3-7.6" style="fill:none;stroke:var(--on-strong);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round"/></symbol>
+    <symbol id="sg-dont" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.8" style="fill:none;stroke:var(--dont);stroke-width:3"/><path d="M5.2 5.2l13.6 13.6" style="stroke:var(--dont);stroke-width:3"/></symbol>
+    <symbol id="sg-warn" viewBox="0 0 24 24"><path d="M12 1.8L23 21.6H1z" style="fill:var(--warn);stroke:#1A1A1A;stroke-width:1.6;stroke-linejoin:round"/><path d="M12 8.4v6.4" style="stroke:#1A1A1A;stroke-width:2.6;stroke-linecap:round"/><circle cx="12" cy="18.1" r="1.45" style="fill:#1A1A1A"/></symbol>
+    <symbol id="sg-info" viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="3" style="fill:var(--info)"/><circle cx="12" cy="6.6" r="1.7" style="fill:var(--on-strong)"/><path d="M12 10.6v7.6" style="stroke:var(--on-strong);stroke-width:3;stroke-linecap:round"/></symbol>
+    <marker id="arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--do)"/></marker>
+  </defs>
+</svg>
+
+<div class="deck" lang="ml">
+<div class="viewport">
+<main class="stage" id="stage" aria-live="polite">
+
+<!-- Title -->
+<section class="slide title" data-title="ശീർഷകം">
+  <div class="eyebrow"><span>സ്റ്റാഫ് നഴ്സുമാർക്കും ആശുപത്രി അറ്റൻഡർമാർക്കുമുള്ള പരിശീലനം</span><span>താലൂക്ക് ഹെഡ്ക്വാർട്ടേഴ്സ് ആശുപത്രി, പീരുമേട്</span></div>
+  <div>
+    <h1>നമ്മുടെ ആശുപത്രി വൃത്തിയും സുരക്ഷിതവുമായി സൂക്ഷിക്കാം</h1>
+    <p class="sub">ശുചീകരണം, ബയോമെഡിക്കൽ മാലിന്യം, സ്പിൽ കൈകാര്യം ചെയ്യൽ, അണുബാധ നിയന്ത്രണം.</p>
+  </div>
+  <div>
+    <dl class="meta">
+      <dt>ആധാരം</dt><dd>Implementation Guidebook for Kayakalp, Sections B, C, D · BMW Management Rules 2016, 2018 · WHO കൈ ശുചിത്വ മാർഗ്ഗനിർദ്ദേശങ്ങൾ</dd>
+    </dl>
+    <div class="binband" aria-hidden="true"><span style="background:var(--bin-yellow)"></span><span style="background:var(--bin-red)"></span><span style="background:var(--bin-white)"></span><span style="background:var(--bin-blue)"></span><span style="background:var(--bin-green)"></span></div>
+  </div>
+</section>
+
+<!-- Sign key -->
+<section class="slide" data-title="ഈ സ്ലൈഡുകൾ എങ്ങനെ വായിക്കാം">
+  <div class="eyebrow"><span class="part">ആമുഖം</span><span>തുടങ്ങുന്നതിനു മുൻപ്</span></div>
+  <h2>ഈ സ്ലൈഡുകൾ എങ്ങനെ വായിക്കാം</h2>
+  <div class="body">
+    <p class="lead">ഓരോ നിർദ്ദേശത്തിനും ഒരു അടയാളമുണ്ട്. അടയാളം നിർദ്ദേശത്തിന്റെ തരം കാണിക്കുന്നു.</p>
+    <div class="signkey">
+      <div><svg class="sg"><use href="#sg-do"/></svg><b>നീല വൃത്തം</b><span>ഇത് ചെയ്യുക.</span></div>
+      <div><svg class="sg"><use href="#sg-dont"/></svg><b>ചുവന്ന വൃത്തം</b><span>ഇത് ചെയ്യരുത്.</span></div>
+      <div><svg class="sg"><use href="#sg-warn"/></svg><b>മഞ്ഞ ത്രികോണം</b><span>മുന്നറിയിപ്പ്. പരിക്കിനോ അണുബാധയ്ക്കോ സാധ്യതയുണ്ട്.</span></div>
+      <div><svg class="sg"><use href="#sg-info"/></svg><b>പച്ച ചതുരം</b><span>വിവരം. നിർദ്ദേശം മനസ്സിലാക്കാൻ ഇത് സഹായിക്കും.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Agenda -->
+<section class="slide" data-title="പരിപാടി">
+  <div class="eyebrow"><span class="part">ആമുഖം</span><span>ആകെ സമയം: 3 മണിക്കൂർ</span></div>
+  <h2>പരിപാടി</h2>
+  <div class="body dense">
+    <div class="agenda">
+      <div class="row"><b class="m">1</b><div><h3>ആശുപത്രി ശുചിത്വവും പരിസര ശുചിത്വവും</h3><span class="muted">ദിനചര്യ ശുചീകരണം, എത്ര തവണ, അണുനാശിനി നേർപ്പിക്കൽ</span></div><div class="min">40<small>മിനിറ്റ്</small></div></div>
+      <div class="row"><b class="m">2</b><div><h3>ബയോമെഡിക്കൽ മാലിന്യ പരിപാലനം</h3><span class="muted">ഉറവിടത്തിൽ വേർതിരിക്കൽ, സുരക്ഷിത കൈകാര്യം, നീക്കം</span></div><div class="min">40<small>മിനിറ്റ്</small></div></div>
+      <div class="row"><b class="m">3</b><div><h3>സ്പിൽ കൈകാര്യം ചെയ്യൽ</h3><span class="muted">രക്തം, ശരീരദ്രവങ്ങൾ, രാസവസ്തുക്കൾ</span></div><div class="min">40<small>മിനിറ്റ്</small></div></div>
+      <div class="row"><b class="m">4</b><div><h3>അണുബാധ പ്രതിരോധം, നിയന്ത്രണം, ജീവനക്കാരുടെ സുരക്ഷ</h3><span class="muted">കൈ ശുചിത്വം, PPE, ഷാർപ്സ്, സൂചി കുത്തിയുള്ള പരിക്ക്</span></div><div class="min">40<small>മിനിറ്റ്</small></div></div>
+      <div class="row"><b class="m">5</b><div><h3>പ്രായോഗിക പ്രദർശനം, വിലയിരുത്തൽ, ചോദ്യങ്ങൾ</h3><span class="muted">നൈപുണ്യ പരിശോധന, റോൾ-പ്ലേ, നിറ കോഡ് സ്പോട്ടർ</span></div><div class="min">20<small>മിനിറ്റ്</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 1 ============ -->
+<section class="slide divider" data-title="മൊഡ്യൂൾ 1: ശുചിത്വം">
+  <div class="num">1</div>
+  <h2>ആശുപത്രി ശുചിത്വവും പരിസര ശുചിത്വവും</h2>
+  <p>ഓരോ സ്ഥലവും എങ്ങനെ വൃത്തിയാക്കണം. എത്ര തവണ വൃത്തിയാക്കണം. സോഡിയം ഹൈപ്പോക്ലോറൈറ്റ് എങ്ങനെ തയ്യാറാക്കണം. മോപ്പ്, ശുചിമുറി, ഓട എന്നിവയുടെ പരിപാലനം.</p>
+  <p class="when">40 മിനിറ്റ് · 1.1 അടിസ്ഥാന തത്വങ്ങൾ · 1.2 നടപടിക്രമങ്ങൾ · 1.3 ഉപകരണ പരിപാലനം</p>
+</section>
+
+<section class="slide" data-title="1.1 അണുബാധയുടെ ചങ്ങല">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.1 അടിസ്ഥാന തത്വങ്ങൾ</span><span>Guidebook p. 37</span></div>
+  <h2>എന്തിന് വൃത്തിയാക്കണം: അണുബാധയുടെ ചങ്ങല</h2>
+  <div class="body">
+    <div class="cols wide-left">
+      <svg class="diagram" viewBox="0 0 640 400" role="img" aria-label="അണുബാധയുടെ ചങ്ങല: രോഗാണു, രോഗാണു വസിക്കുന്ന ഇടം, പുറത്തേക്കുള്ള വഴി, പകരുന്ന വഴി, അകത്തേക്കുള്ള വഴി, രോഗസാധ്യതയുള്ള രോഗി.">
+        <ellipse class="d-orbit" cx="320" cy="200" rx="230" ry="150"/>
+        <g class="d-arrow">
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(435,70) rotate(20.6)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(550,200) rotate(90)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(435,330) rotate(159.4)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(205,330) rotate(200.6)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(90,200) rotate(270)"/>
+          <path d="M-9,-8 L9,0 L-9,8Z" transform="translate(205,70) rotate(339.4)"/>
+        </g>
+        <rect class="d-node" x="235" y="22" width="170" height="58" rx="6"/><text class="d-t" x="320" y="48" text-anchor="middle">1 · രോഗാണു</text><text class="d-s" x="320" y="67" text-anchor="middle">ബാക്ടീരിയ, വൈറസ്</text>
+        <rect class="d-key" x="434" y="96" width="170" height="58" rx="6"/><text class="d-t" x="519" y="122" text-anchor="middle">2 · വസിക്കുന്ന ഇടം</text><text class="d-s" x="519" y="141" text-anchor="middle">അഴുക്കുള്ള പ്രതലം, മോപ്പ്, കൈ</text>
+        <rect class="d-node" x="434" y="246" width="170" height="58" rx="6"/><text class="d-t" x="519" y="272" text-anchor="middle">3 · പുറത്തേക്കുള്ള വഴി</text><text class="d-s" x="519" y="291" text-anchor="middle">രക്തം, ചുമ, മലം</text>
+        <rect class="d-key" x="235" y="320" width="170" height="58" rx="6"/><text class="d-t" x="320" y="346" text-anchor="middle">4 · പകരുന്ന വഴി</text><text class="d-s" x="320" y="365" text-anchor="middle">കൈ, ഉപകരണം, വായു</text>
+        <rect class="d-node" x="36" y="246" width="170" height="58" rx="6"/><text class="d-t" x="121" y="272" text-anchor="middle">5 · അകത്തേക്കുള്ള വഴി</text><text class="d-s" x="121" y="291" text-anchor="middle">മുറിവ്, വായ്, കത്തീറ്റർ</text>
+        <rect class="d-node" x="36" y="96" width="170" height="58" rx="6"/><text class="d-t" x="121" y="122" text-anchor="middle">6 · രോഗസാധ്യതയുള്ളയാൾ</text><text class="d-s" x="121" y="141" text-anchor="middle">രോഗി</text>
+        <text class="d-t" x="320" y="192" text-anchor="middle">ആറ് കണ്ണികളും ചേർന്നാൽ</text>
+        <text class="d-t" x="320" y="214" text-anchor="middle">മാത്രമേ അണുബാധ ഉണ്ടാകൂ.</text>
+      </svg>
+      <ul class="rules">
+        <li class="info"><span>ആറ് കണ്ണികളും ചേരുമ്പോൾ മാത്രമാണ് അണുബാധ ഉണ്ടാകുന്നത്.</span></li>
+        <li class="info"><span>ഒരു കണ്ണി മുറിച്ചാൽ ചങ്ങല പൊട്ടും.</span></li>
+        <li class="do"><span><b>കണ്ണി 2:</b> നിങ്ങളുടെ ശുചീകരണം രോഗാണുക്കൾ വസിക്കുന്ന ഇടങ്ങൾ ഇല്ലാതാക്കുന്നു.</span></li>
+        <li class="do"><span><b>കണ്ണി 4:</b> വൃത്തിയുള്ള കൈകൾ രോഗാണു ഒരാളിൽ നിന്ന് മറ്റൊരാളിലേക്ക് പകരുന്നത് തടയുന്നു.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="1.1 കൂടുതൽ തൊടുന്നതും കുറച്ച് തൊടുന്നതുമായ പ്രതലങ്ങൾ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.1 അടിസ്ഥാന തത്വങ്ങൾ</span><span>Guidebook p. 34</span></div>
+  <h2>കൂടുതൽ തൊടുന്ന പ്രതലങ്ങളും കുറച്ച് തൊടുന്ന പ്രതലങ്ങളും</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div class="box">
+        <h3>കൂടുതൽ തൊടുന്ന പ്രതലങ്ങൾ</h3>
+        <p class="muted small">ധാരാളം കൈകൾ ഇവ തൊടുന്നു. ഇവയിൽ നിന്ന് രോഗാണു രോഗികളിലേക്ക് എത്തുന്നു.</p>
+        <p style="margin:.6em 0">വാതിൽപ്പിടി · ലിഫ്റ്റ് ബട്ടൺ · കട്ടിലിന്റെ കൈവരി · സ്വിച്ച് · ടെലിഫോൺ · കീബോർഡ് · ബെഡ്സൈഡ് ടേബിൾ · മോണിറ്റർ · ടോയ്‌ലറ്റിനു ചുറ്റുമുള്ള ഭിത്തി · കർട്ടന്റെ അറ്റം</p>
+        <ul class="rules"><li class="do"><span>ഇവ മറ്റു പ്രതലങ്ങളേക്കാൾ കൂടുതൽ തവണ വൃത്തിയാക്കുക.</span></li></ul>
+      </div>
+      <div class="box">
+        <h3>കുറച്ച് തൊടുന്ന പ്രതലങ്ങൾ</h3>
+        <p class="muted small">കുറച്ച് കൈകൾ മാത്രം ഇവ തൊടുന്നു. അപകടസാധ്യത കുറവാണ്.</p>
+        <p style="margin:.6em 0">തറ · ഭിത്തി · സീലിംഗ് · കണ്ണാടി · ജനൽപ്പടി</p>
+        <ul class="rules">
+          <li class="do"><span>സമയക്രമം അനുസരിച്ച് വൃത്തിയാക്കുക.</span></li>
+          <li class="do"><span>അഴുക്ക് കണ്ടാൽ ഉടൻ വൃത്തിയാക്കുക.</span></li>
+        </ul>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>നിരപ്പായ പ്രതലങ്ങളിൽ ഭിത്തിയേക്കാൾ കൂടുതൽ പൊടിയും രോഗാണുവും അടിയുന്നു. അവ കൂടുതൽ തവണ വൃത്തിയാക്കുക.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.1 അപകടസാധ്യതാ മേഖലകൾ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.1 അടിസ്ഥാന തത്വങ്ങൾ</span><span>Guidebook p. 35–36</span></div>
+  <h2>ഓരോ സ്ഥലത്തിനും ഒരു അപകടസാധ്യതാ മേഖലയുണ്ട്</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box">
+        <span class="chip high">ഉയർന്ന സാധ്യത</span>
+        <p style="margin:.6em 0">OT · ICU · HDU · കാഷ്വാലിറ്റി · ലേബർ റൂം · ഡയാലിസിസ് · CSSD · ശസ്ത്രക്രിയാനന്തര വാർഡ് · സർജിക്കൽ വാർഡ്</p>
+        <ul class="rules"><li class="do"><span>ഇടയ്ക്കിടെ പൂർണ്ണമായി വൃത്തിയാക്കുക. ഉയർന്ന തലത്തിലുള്ള അണുനാശിനി ഉപയോഗിക്കുക.</span></li></ul>
+      </div>
+      <div class="box">
+        <span class="chip mod">ഇടത്തരം സാധ്യത</span>
+        <p style="margin:.6em 0">ജനറൽ വാർഡ് · ലാബ് · ബ്ലഡ് ബാങ്ക് · ഫാർമസി · അടുക്കള · അലക്കുശാല · മോർച്ചറി</p>
+        <ul class="rules"><li class="do"><span>പതിവായി വൃത്തിയാക്കുക. ഇടവേളകളിൽ അഴുക്കുള്ള ഭാഗം വൃത്തിയാക്കുക.</span></li></ul>
+      </div>
+      <div class="box">
+        <span class="chip low">കുറഞ്ഞ സാധ്യത</span>
+        <p style="margin:.6em 0">ഇടനാഴി · ഓഫീസ് · സ്റ്റോർ · റെക്കോർഡ് റൂം · സെമിനാർ ഹാൾ · പൊതുസ്ഥലങ്ങൾ</p>
+        <ul class="rules"><li class="do"><span>പതിവായി വൃത്തിയാക്കുക. ഡിറ്റർജന്റ് അല്ലെങ്കിൽ കുറഞ്ഞ തലത്തിലുള്ള അണുനാശിനി ഉപയോഗിക്കുക.</span></li></ul>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>ഒരു സ്ഥലത്തോട് ചേർന്നുള്ള ടോയ്‌ലറ്റ്, സ്റ്റാഫ് റൂം, ഓഫീസ് എന്നിവയ്ക്ക് അതേ മേഖല തന്നെ.</span></li>
+      <li class="warn"><span>മേഖല മാറാം. വയറിളക്കമോ പനിയോ പടരുമ്പോൾ വാർഡ് ഉയർന്ന സാധ്യതാ മേഖലയാകും. സൂപ്പർവൈസറുടെ പുതിയ നിർദ്ദേശം പാലിക്കുക.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.1 ശുചീകരണ ആവൃത്തി">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.1 അടിസ്ഥാന തത്വങ്ങൾ</span><span>Guidebook p. 38–39, Table 7</span></div>
+  <h2>ഓരോ സ്ഥലവും എത്ര തവണ വൃത്തിയാക്കണം</h2>
+  <div class="body">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>സ്ഥലം</th><th>മേഖല</th><th>കുറഞ്ഞത് ദിവസേന ശുചീകരണം</th></tr></thead>
+      <tbody>
+        <tr><td>എല്ലാ ICU-കളും</td><td><span class="chip high">ഉയർന്നത്</span></td><td>ദിവസം 3 തവണ, നിശ്ചിത സമയത്ത്. ആവശ്യമെങ്കിൽ അധികമായും.</td></tr>
+        <tr><td>ഓപ്പറേഷൻ തിയേറ്റർ</td><td><span class="chip high">ഉയർന്നത്</span></td><td>ദിവസത്തിന്റെ തുടക്കം, കേസുകൾക്കിടയിൽ, ലിസ്റ്റ് തീരുമ്പോൾ. കൂടാതെ പൂർണ്ണ കഴുകൽ.</td></tr>
+        <tr><td>കാഷ്വാലിറ്റി, ലേബർ റൂം, ഡയാലിസിസ്, പ്രൊസീജർ റൂം</td><td><span class="chip high">ഉയർന്നത്</span></td><td>ദിവസം 2 തവണ, നിശ്ചിത സമയത്ത്. ആവശ്യമെങ്കിൽ അധികമായും.</td></tr>
+        <tr><td>ജനറൽ വാർഡ്, ലാബ്, ഐസൊലേഷൻ റൂം, മലിന ലിനൻ ഏരിയ</td><td><span class="chip mod">ഇടത്തരം</span></td><td>ദിവസം 2 തവണ, നിശ്ചിത സമയത്ത്. ആവശ്യമെങ്കിൽ അധികമായും.</td></tr>
+        <tr><td>ഇടനാഴി, ഓഫീസ്, റിസപ്ഷൻ, OPD കാത്തിരിപ്പ് സ്ഥലം</td><td><span class="chip low">കുറഞ്ഞത്</span></td><td>ദിവസം 2 തവണ, നിശ്ചിത സമയത്ത്.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ul class="rules"><li class="do"><span>അധിക ശുചീകരണം: പ്രതലം അഴുക്കായാലോ സ്പിൽ ഉണ്ടായാലോ ഉടൻ വൃത്തിയാക്കുക.</span></li></ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 വൃത്തിയാക്കുന്നതിനു മുൻപും വൃത്തിയാക്കുമ്പോഴും">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.2 നടപടിക്രമങ്ങൾ</span><span>Guidebook p. 40</span></div>
+  <h2>വൃത്തിയാക്കുന്നതിനു മുൻപും വൃത്തിയാക്കുമ്പോഴും</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div>
+        <h3>തുടങ്ങുന്നതിനു മുൻപ്</h3>
+        <ol class="steps">
+          <li><span>വാതിലിൽ ഐസൊലേഷൻ അടയാളം ഉണ്ടോ എന്ന് നോക്കുക. ഉണ്ടെങ്കിൽ അതിലെ മുൻകരുതലുകൾ പാലിക്കുക.</span></li>
+          <li><span>മുറിയിൽ കയറുന്നതിനു മുൻപ് എല്ലാ സാധനങ്ങളും എടുക്കുക.</span></li>
+          <li><span>ഉപകരണങ്ങൾ വൃത്തിയുള്ളതാണെന്ന് ഉറപ്പാക്കുക.</span></li>
+          <li><span>ലായനി തയ്യാറാക്കുക. പിന്നീട് കൈ വൃത്തിയാക്കി ഗ്ലൗസ് ധരിക്കുക.</span></li>
+          <li><span>സ്ഥലത്തെ അലങ്കോലം മാറ്റുക.</span></li>
+        </ol>
+      </div>
+      <div>
+        <h3>വൃത്തിയാക്കുമ്പോൾ</h3>
+        <ul class="rules">
+          <li class="do"><span>അണുനാശിനി ഉപയോഗിക്കുന്നതിനു മുൻപ് കാണുന്ന അഴുക്ക് നീക്കുക.</span></li>
+          <li class="do"><span>നനഞ്ഞ മോപ്പിനു മുൻപ് ഉണങ്ങിയ ഡസ്റ്റ് മോപ്പ് ഉപയോഗിക്കുക.</span></li>
+          <li class="do"><span>മോപ്പ് ഒരു തവണ മുക്കുക. 120 ചതുരശ്ര അടി (ഏകദേശം 11 m²) തുടയ്ക്കുക. പിന്നെ വീണ്ടും മുക്കുക.</span></li>
+          <li class="do"><span>240 ചതുരശ്ര അടിക്കു ശേഷം, അല്ലെങ്കിൽ രക്തം തുടച്ച ഉടൻ, ലായനി മാറ്റുക.</span></li>
+          <li class="dont"><span>മോപ്പ് കുടയരുത്. രോഗീപരിചരണ സ്ഥലങ്ങളിൽ ചൂൽ ഉപയോഗിക്കരുത്.</span></li>
+          <li class="warn"><span>തുടയ്ക്കുന്നതിനു മുൻപ് സൂചിയോ മൂർച്ചയുള്ള വസ്തുക്കളോ ഉണ്ടോ എന്ന് നോക്കുക.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 മൂന്ന് ബക്കറ്റ് രീതി">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.2 നടപടിക്രമങ്ങൾ</span><span>Guidebook p. 48, Figure 19</span></div>
+  <h2>മൂന്ന് ബക്കറ്റ് രീതി ഉപയോഗിക്കുക</h2>
+  <div class="body">
+    <div class="buckets">
+      <div>
+        <svg viewBox="0 0 140 140" aria-hidden="true"><path class="d-handle" d="M24 30C24 4 116 4 116 30"/><path class="d-bucket d-liq1" d="M14 30H126L114 134H26Z"/><circle cx="50" cy="52" r="5" class="d-liq2" style="stroke:var(--ink-2)"/><circle cx="72" cy="44" r="4" class="d-liq2" style="stroke:var(--ink-2)"/><circle cx="92" cy="56" r="6" class="d-liq2" style="stroke:var(--ink-2)"/></svg>
+        <b class="n">ബക്കറ്റ് 1</b>
+        <h3>ഡിറ്റർജന്റ് വെള്ളം</h3>
+        <p>മോപ്പ് മുക്കുക. തറ തുടയ്ക്കുക.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 140 140" aria-hidden="true"><path class="d-handle" d="M24 30C24 4 116 4 116 30"/><path class="d-bucket d-liq2" d="M14 30H126L114 134H26Z"/></svg>
+        <b class="n">ബക്കറ്റ് 2</b>
+        <h3>ശുദ്ധജലം</h3>
+        <p>അഴുക്കായ മോപ്പ് കഴുകുക. റിംഗറിൽ പിഴിയുക.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 140 140" aria-hidden="true"><path class="d-handle" d="M24 30C24 4 116 4 116 30"/><path class="d-bucket d-liq3" d="M14 30H126L114 134H26Z"/><path d="M70 62v40M50 82h40" style="stroke:var(--info);stroke-width:7;stroke-linecap:round"/></svg>
+        <b class="n">ബക്കറ്റ് 3</b>
+        <h3>അണുനാശിനി ലായനി</h3>
+        <p>മോപ്പ് മുക്കുക. തറ വീണ്ടും തുടയ്ക്കുക.</p>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>ഇളം നിറമുള്ള ബക്കറ്റ് ഉപയോഗിക്കുക. വെള്ളം അഴുക്കായത് പെട്ടെന്ന് കാണാം.</span></li>
+      <li class="dont"><span>ബക്കറ്റ് 2-ൽ കഴുകാതെ അഴുക്കായ മോപ്പ് ബക്കറ്റ് 1-ലോ 3-ലോ ഇടരുത്.</span></li>
+      <li class="do"><span>ബക്കറ്റ് 2-ലെ വെള്ളം അഴുക്കാകുമ്പോൾ മാറ്റുക.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 വൃത്തിയാക്കേണ്ട ദിശ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.2 നടപടിക്രമങ്ങൾ</span><span>Guidebook p. 40–41, Figures 17–18</span></div>
+  <h2>വൃത്തിയാക്കേണ്ട ദിശ</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div>
+        <h3>മുകളിൽ നിന്ന് താഴേക്ക്</h3>
+        <svg class="diagram" viewBox="0 0 220 256" role="img" aria-label="സീലിംഗിൽ നിന്നും ഉയർന്ന പ്രതലങ്ങളിൽ നിന്നും തറയിലേക്ക് വൃത്തിയാക്കുക.">
+          <path class="d-wall" d="M20 24H200V232H20Z"/>
+          <rect class="d-bed" x="40" y="44" width="60" height="16"/><text class="d-s" x="108" y="57">ഷെൽഫ്</text>
+          <rect class="d-bed" x="40" y="120" width="90" height="16"/><text class="d-s" x="136" y="133">മേശ</text>
+          <path class="d-bed" d="M20 210H200"/><text class="d-s" x="34" y="225">തറ (അവസാനം)</text>
+          <path class="d-path" d="M175 40V205" marker-end="url(#arr)"/>
+          <circle class="d-start" cx="175" cy="40" r="7"/>
+        </svg>
+      </div>
+      <div>
+        <h3>വാർഡ്: അകത്തു നിന്ന് പുറത്തേക്ക്</h3>
+        <svg class="diagram" viewBox="0 0 360 256" role="img" aria-label="വാർഡിന്റെ ഉൾഭാഗത്ത് നിന്ന് തുടങ്ങി വരിവരിയായി വാതിൽ വരെ.">
+          <path class="d-wall" d="M150 232H20V24H340V232H210"/>
+          <rect class="d-bed" x="26" y="60" width="22" height="12"/><rect class="d-bed" x="26" y="104" width="22" height="12"/><rect class="d-bed" x="26" y="148" width="22" height="12"/>
+          <rect class="d-bed" x="312" y="60" width="22" height="12"/><rect class="d-bed" x="312" y="104" width="22" height="12"/><rect class="d-bed" x="312" y="148" width="22" height="12"/>
+          <path class="d-path" d="M58 44H300V88H58V132H300V176H180V238" marker-end="url(#arr)"/>
+          <circle class="d-start" cx="58" cy="44" r="7"/>
+          <text class="d-t" x="70" y="38">തുടക്കം: ഉൾഭാഗം</text>
+          <text class="d-t" x="218" y="250">അവസാനം: വാതിൽ</text>
+        </svg>
+      </div>
+      <div>
+        <h3>OT: ടേബിളിൽ നിന്ന് വാതിലിലേക്ക്</h3>
+        <svg class="diagram" viewBox="0 0 360 256" role="img" aria-label="OT ടേബിളിൽ നിന്ന് തുടങ്ങി വളയങ്ങളായി പുറത്തേക്ക്, വാതിൽ വരെ.">
+          <path class="d-wall" d="M150 232H20V24H340V232H210"/>
+          <rect class="d-ring" x="40" y="40" width="280" height="172" rx="14"/>
+          <rect class="d-ring" x="95" y="72" width="170" height="108" rx="12"/>
+          <rect class="d-table" x="145" y="110" width="70" height="32" rx="4"/>
+          <text class="d-t" x="180" y="131" text-anchor="middle">1</text>
+          <text class="d-t" x="104" y="92">2</text>
+          <text class="d-t" x="50" y="60">3</text>
+          <path class="d-path" d="M180 146V238" marker-end="url(#arr)"/>
+          <text class="d-t" x="218" y="250">4 · അവസാനം: വാതിൽ</text>
+        </svg>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="do"><span>ടോയ്‌ലറ്റ് അവസാനം വൃത്തിയാക്കുക. തറ നനഞ്ഞിരിക്കുമ്പോൾ "തറ നനഞ്ഞിരിക്കുന്നു" ബോർഡ് വയ്ക്കുക.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 സോഡിയം ഹൈപ്പോക്ലോറൈറ്റ് നേർപ്പിക്കൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.2 നടപടിക്രമങ്ങൾ</span><span>Guidebook p. 43–44, Tables 8–9</span></div>
+  <h2>സോഡിയം ഹൈപ്പോക്ലോറൈറ്റ് ശരിയായി തയ്യാറാക്കുക</h2>
+  <div class="body xdense">
+    <p>കുറഞ്ഞത് 5% സോഡിയം ഹൈപ്പോക്ലോറൈറ്റ് ഉള്ള ബ്ലീച്ചിന്. 1 ലിറ്റർ ലായനി തയ്യാറാക്കുന്നതിന്.</p>
+    <div class="tbl-wrap">
+    <table class="tbl compact">
+      <thead><tr><th>ലായനി</th><th>ഉപയോഗം</th><th>ബ്ലീച്ച്</th><th>വെള്ളം</th></tr></thead>
+      <tbody>
+        <tr><td><b>1%</b><br>1:100 · 500 ppm</td><td>സാധാരണ പ്രതലങ്ങൾ തുടയ്ക്കാൻ. ചെറിയ രക്ത സ്പിൽ. മലിന ലിനൻ 5 മിനിറ്റ് മുക്കിവച്ച ശേഷം കഴുകുക.</td><td class="num">10 ml</td><td class="num">990 ml</td></tr>
+        <tr><td><b>10%</b><br>1:10 · 5000 ppm</td><td>വലിയ രക്ത/ശരീരദ്രവ സ്പിൽ (10 ml-ൽ കൂടുതൽ).</td><td class="num">100 ml</td><td class="num">900 ml</td></tr>
+        <tr><td><b>0.5%</b><br>1:200 · 250 ppm</td><td>മോപ്പ്, ബക്കറ്റ്, മറ്റ് ശുചീകരണ ഉപകരണങ്ങൾ അണുവിമുക്തമാക്കാൻ.</td><td class="num">5 ml</td><td class="num">995 ml</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="cols">
+      <ol class="steps">
+        <li><span>റബ്ബർ ഗ്ലൗസ് ധരിക്കുക. വായുസഞ്ചാരമുള്ള സ്ഥലത്ത് തയ്യാറാക്കുക.</span></li>
+        <li><span>ആദ്യം ബക്കറ്റിൽ വെള്ളം നിറയ്ക്കുക. പിന്നെ ബ്ലീച്ച് ചേർക്കുക.</span></li>
+        <li><span>സിറിഞ്ചോ അളവുകപ്പോ കൊണ്ട് അളക്കുക. ഊഹിച്ച് ഒഴിക്കരുത്.</span></li>
+        <li><span>തയ്യാറാക്കിയ ലായനിയുടെ സ്ട്രെങ്ത്, തീയതി, സമയം എന്നിവ എഴുതി ഒട്ടിക്കുക.</span></li>
+      </ol>
+      <div class="callout"><svg class="sg"><use href="#sg-warn"/></svg><span><b class="label">മുന്നറിയിപ്പ്</b>ബ്ലീച്ച് ആസിഡ്, അമോണിയ, മൂത്രം എന്നിവയുമായി കലർത്തരുത്. വിഷവാതകമായ ക്ലോറിൻ ഉണ്ടാകും. ദിവസവും പുതിയ ലായനി തയ്യാറാക്കുക. വെയിലും പഴക്കവും ബ്ലീച്ചിന്റെ വീര്യം കുറയ്ക്കും.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="1.2 മറ്റ് ശുചീകരണ രാസവസ്തുക്കൾ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.2 നടപടിക്രമങ്ങൾ</span><span>Guidebook p. 42–47</span></div>
+  <h2>മറ്റ് ശുചീകരണ രാസവസ്തുക്കൾ</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box"><h3>ഡിറ്റർജന്റ് / ലിക്വിഡ് സോപ്പ്</h3><p>സാധാരണ ശുചീകരണം. നന്നായി ഉരച്ചാൽ 80–90% രോഗാണുക്കൾ നീങ്ങും.</p><ul class="rules" style="margin-top:.5em"><li class="do"><span>ഉപയോഗിക്കുന്നതിന് തൊട്ടുമുൻപ് തയ്യാറാക്കുക. ബാക്കി കളയുക.</span></li></ul></div>
+      <div class="box"><h3>ആൽഡിഹൈഡ് അണുനാശിനി</h3><p>OT, ICU, ലേബർ റൂം എന്നിവിടങ്ങളിലെ പ്രതലങ്ങൾക്കുള്ള ഉയർന്ന തല അണുനാശിനി.</p><ul class="rules" style="margin-top:.5em"><li class="do"><span>ദിവസേന: 1 ലിറ്റർ വെള്ളത്തിൽ 7 ml.</span></li></ul></div>
+      <div class="box"><h3>ആൽക്കഹോൾ 60–90%</h3><p>ചെറിയ സാധനങ്ങൾക്ക് മാത്രം: തെർമോമീറ്റർ, സ്റ്റെതസ്കോപ്പ്, ഉപകരണ ബട്ടൺ.</p><ul class="rules" style="margin-top:.5em"><li class="warn"><span>പെട്ടെന്ന് തീ പിടിക്കും. വലിയ പ്രതലങ്ങളിലും തീയ്ക്കടുത്തും ഉപയോഗിക്കരുത്.</span></li></ul></div>
+    </div>
+    <ul class="rules">
+      <li class="do"><span>എല്ലാ രാസവസ്തുക്കളും പൂട്ടിയ അലമാരയിൽ, തണുത്ത സ്ഥലത്ത്, വെയിൽ ഏൽക്കാതെ സൂക്ഷിക്കുക.</span></li>
+      <li class="do"><span>കാലാവധി ആദ്യം തീരുന്നത് ആദ്യം ഉപയോഗിക്കുക.</span></li>
+      <li class="dont"><span>രാസവസ്തുക്കൾ സംസ്കരിക്കാതെ ഓടയിൽ ഒഴിക്കരുത്. നഴ്സറിയിലും ഭക്ഷണ പ്രതലങ്ങളിലും ഫിനൈൽ ഉപയോഗിക്കരുത്.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.3 മോപ്പ്, തുണി, ഉപകരണങ്ങളുടെ പരിപാലനം">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.3 ഉപകരണ പരിപാലനം</span><span>Guidebook p. 48–50, Table 10</span></div>
+  <h2>മോപ്പ്, തുണി, ഉപകരണങ്ങൾ: കഴുകൽ, ഉണക്കൽ, സൂക്ഷിക്കൽ</h2>
+  <div class="body">
+    <div class="tbl-wrap">
+    <table class="tbl xdense">
+      <thead><tr><th>സാധനം</th><th>കഴുകൽ</th><th>അണുവിമുക്തമാക്കൽ, ഉണക്കൽ</th></tr></thead>
+      <tbody>
+        <tr><td><b>കോട്ടൺ മോപ്പ്, തുണി</b></td><td>സോപ്പും വെള്ളവും കൊണ്ട് കഴുകുക. സോപ്പ് മുഴുവൻ കളയുക.</td><td>0.5% ഹൈപ്പോക്ലോറൈറ്റിൽ 30 മിനിറ്റ് മുക്കിവയ്ക്കുക. വെള്ളത്തിൽ കഴുകുക. പൂർണ്ണമായി ഉണക്കുക.</td></tr>
+        <tr><td><b>മൈക്രോഫൈബർ മോപ്പ്</b></td><td>വീര്യം കുറഞ്ഞ സോപ്പിൽ കഴുകുക. ബ്രഷ് ഉപയോഗിക്കരുത്.</td><td>ചൂടുവെള്ളത്തിൽ (70–80 °C) 2 മിനിറ്റ്. ബ്ലീച്ച് ഉപയോഗിക്കരുത്.</td></tr>
+        <tr><td><b>ഉണങ്ങിയ ഡസ്റ്റ് മോപ്പ്</b></td><td>കഴുകരുത്. തുറസ്സായ സ്ഥലത്ത് കൈബ്രഷ് കൊണ്ട് വൃത്തിയാക്കുക.</td><td>—</td></tr>
+        <tr><td><b>ബക്കറ്റ്, ട്രോളി</b></td><td>സോപ്പ്, വെള്ളം, ബ്രഷ് എന്നിവ കൊണ്ട് കഴുകുക.</td><td>0.5% ഹൈപ്പോക്ലോറൈറ്റിൽ 1 മിനിറ്റ് കഴുകുക. വെള്ളത്തിൽ കഴുകി, വായുസഞ്ചാരമുള്ളിടത്ത് ഉണക്കുക.</td></tr>
+        <tr><td><b>റബ്ബർ ഗ്ലൗസ്</b></td><td>ഓരോ ജോലിക്കും ശേഷം, ഊരുന്നതിനു മുൻപ് സോപ്പും വെള്ളവും കൊണ്ട് കഴുകുക.</td><td>ദിവസാവസാനം 0.5% ഹൈപ്പോക്ലോറൈറ്റിൽ 1 മിനിറ്റ് മുക്കുക. കഴുകി തൂക്കിയിട്ട് ഉണക്കുക.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ul class="rules dense">
+      <li class="do"><span>ക്രിട്ടിക്കൽ ഏരിയ, ജനറൽ ഏരിയ, ടോയ്‌ലറ്റ് എന്നിവയ്ക്ക് വെവ്വേറെ മോപ്പും തുണിയും. നിറ കോഡ് പാലിക്കുക.</span></li>
+      <li class="do"><span>ഉപകരണങ്ങൾ ഡേർട്ടി യൂട്ടിലിറ്റി റൂമിൽ സൂക്ഷിക്കുക. രോഗീ സ്ഥലങ്ങളിലോ വാതിലിനു പിന്നിലോ ടോയ്‌ലറ്റിലോ വയ്ക്കരുത്.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="1.3 ശുചിമുറി, ഓട, കീടങ്ങൾ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 1 · 1.3 ഉപകരണ പരിപാലനം</span><span>Guidebook p. 39–40, 52, 59, 75</span></div>
+  <h2>ശുചിമുറി, ഓട, കീട നിയന്ത്രണം</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box">
+        <h3>ശുചിമുറി</h3>
+        <ul class="rules">
+          <li class="do"><span>ക്ലോറിൻ ലായനി കൊണ്ട് ടോയ്‌ലറ്റ് വൃത്തിയാക്കുക. ഇത് ദുർഗന്ധവും മാറ്റും.</span></li>
+          <li class="do"><span>ടോയ്‌ലറ്റിനു ചുറ്റുമുള്ള ഭിത്തി വൃത്തിയാക്കുക.</span></li>
+          <li class="do"><span>തറയ്ക്ക് റബ്ബർ വൈപ്പർ ഉപയോഗിക്കുക. തറ ഉണങ്ങിയിരിക്കണം.</span></li>
+          <li class="do"><span>വെള്ളം, സോപ്പ്, ബിൻ എന്നിവ ഉണ്ടെന്ന് ഉറപ്പാക്കുക.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>ഓട</h3>
+        <ul class="rules">
+          <li class="do"><span>എല്ലാ ഓടകളും മൂടിയിരിക്കണം.</span></li>
+          <li class="do"><span>ആഴ്ചയിൽ ഒരിക്കൽ ഓട വൃത്തിയാക്കുക.</span></li>
+          <li class="do"><span>ഓട അടയുകയോ ചോരുകയോ ചെയ്താൽ സൂപ്പർവൈസറെ അറിയിക്കുക.</span></li>
+          <li class="dont"><span>വെള്ളം കെട്ടിനിൽക്കാൻ അനുവദിക്കരുത്. കൊതുകും ഈച്ചയും പെരുകും.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>കീടങ്ങൾ</h3>
+        <ul class="rules">
+          <li class="do"><span>മാറാലയും പക്ഷിക്കൂടും നീക്കുക.</span></li>
+          <li class="do"><span>ബിന്നുകൾ അടച്ചു വയ്ക്കുക. ഭക്ഷണ മാലിന്യം ദിവസവും നീക്കുക.</span></li>
+          <li class="dont"><span>തെരുവു മൃഗങ്ങളെ ആശുപത്രിയിൽ കയറാൻ അനുവദിക്കരുത്.</span></li>
+          <li class="do"><span>എലിയോ പാറ്റയോ കണ്ടാൽ സൂപ്പർവൈസറെ അറിയിക്കുക.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 2 ============ -->
+<section class="slide divider" data-title="മൊഡ്യൂൾ 2: ബയോമെഡിക്കൽ മാലിന്യം">
+  <div class="num">2</div>
+  <h2>ബയോമെഡിക്കൽ മാലിന്യ പരിപാലനം</h2>
+  <p>മാലിന്യം ഉണ്ടാകുന്ന സ്ഥലത്തു തന്നെ വേർതിരിക്കുക. സുരക്ഷിതമായി കൈകാര്യം ചെയ്യുക. സുരക്ഷിത വഴിയിലൂടെ നീക്കുക.</p>
+  <p class="when">40 മിനിറ്റ് · 2.1 നിറ കോഡ് · 2.2 കൈകാര്യം, സംഭരണം</p>
+</section>
+
+<section class="slide" data-title="2.1 നിറ കോഡ് അനുസരിച്ച് വേർതിരിക്കൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 2 · 2.1 വേർതിരിക്കൽ</span><span>Guidebook p. 56–57, 71–72 · BMW Rules 2016 &amp; 2018</span></div>
+  <h2>ഓരോ മാലിന്യവും ശരിയായ നിറത്തിൽ ഇടുക</h2>
+  <div class="body">
+    <div class="bins">
+      <div class="bin y"><div class="lid">മഞ്ഞ<small>മഞ്ഞ ബാഗുള്ള ബിൻ</small></div><ul><li>ശരീരഭാഗങ്ങൾ</li><li>മലിനമായ പഞ്ഞി, ഡ്രസ്സിംഗ്</li><li>കാലാവധി കഴിഞ്ഞ മരുന്നുകൾ</li><li>രാസ മാലിന്യം</li></ul></div>
+      <div class="bin r"><div class="lid">ചുവപ്പ്<small>ചുവന്ന ബാഗുള്ള ബിൻ</small></div><ul><li>മലിനമായ പ്ലാസ്റ്റിക്</li><li>IV സെറ്റ്, ട്യൂബ്</li><li>കത്തീറ്റർ, യൂറിൻ ബാഗ്</li><li>സൂചിയില്ലാത്ത സിറിഞ്ച്</li><li>ഗ്ലൗസ്</li></ul></div>
+      <div class="bin b"><div class="lid">നീല<small>കുത്തിത്തുളയ്ക്കാത്ത പെട്ടി</small></div><ul><li>പൊട്ടിയ ഗ്ലാസ്</li><li>ആംപ്യൂൾ, മരുന്ന് വയൽ</li><li>ലോഹ ഇംപ്ലാന്റ്</li></ul></div>
+      <div class="bin w"><div class="lid">വെള്ള<small>സുതാര്യ ഷാർപ്സ് പെട്ടി</small></div><ul><li>സൂചികൾ</li><li>സ്കാൽപൽ, ബ്ലേഡ്</li><li>സൂചി ഉറപ്പിച്ച സിറിഞ്ച്</li></ul></div>
+      <div class="bin g"><div class="lid">കറുപ്പ് / പച്ച<small>സാധാരണ മാലിന്യം</small></div><ul><li>അണുബാധയില്ലാത്തത്</li><li>ഭക്ഷണാവശിഷ്ടം, കടലാസ്, പാക്കിംഗ്</li><li>മുനിസിപ്പൽ മാലിന്യത്തിലേക്ക്</li></ul></div>
+    </div>
+    <ul class="rules dense">
+      <li class="do"><span>മാലിന്യം ഉണ്ടാകുന്ന സ്ഥലത്തു തന്നെ വേർതിരിക്കുക.</span></li>
+      <li class="dont"><span>സാധാരണ മാലിന്യം ബയോമെഡിക്കൽ മാലിന്യവുമായി കലർത്തരുത്. ബാഗിൽ നിന്ന് മാലിന്യം പുറത്തെടുത്ത് വീണ്ടും വേർതിരിക്കരുത്.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="2.2 ബാഗ്: നിറയ്ക്കൽ, കെട്ടൽ, ലേബൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 2 · 2.2 കൈകാര്യം</span><span>Guidebook p. 55–58 · BMW Rules 2018 amendment</span></div>
+  <h2>ബാഗ് നിറയ്ക്കൽ, കെട്ടൽ, ലേബൽ, ബാർകോഡ്</h2>
+  <div class="body">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>ബാഗ് 3/4 നിറയുമ്പോൾ മാറ്റുക.</span></li>
+        <li><span>ബാഗ് മുകളിൽ പിടിക്കുക. മുറുക്കി കെട്ടുക.</span></li>
+        <li><span>ബാഗിൽ ലേബൽ ഒട്ടിക്കുക: ബയോഹസാർഡ് ചിഹ്നം, തീയതി, വാർഡ്.</span></li>
+        <li><span>സംസ്കരണ കേന്ദ്രത്തിലേക്ക് പോകുന്ന ഓരോ ബാഗിലും പെട്ടിയിലും ബാർകോഡ് ലേബൽ ഒട്ടിക്കുക.</span></li>
+        <li><span>അതേ നിറത്തിലുള്ള പുതിയ ബാഗ് ബിന്നിൽ ഇടുക.</span></li>
+      </ol>
+      <ul class="rules">
+        <li class="dont"><span>ബാഗ് 3/4-ൽ കൂടുതൽ നിറയ്ക്കരുത്. നിറഞ്ഞ ബാഗ് കീറുകയോ ചോരുകയോ ചെയ്യാം.</span></li>
+        <li class="dont"><span>മാലിന്യം കൈ കൊണ്ട് അമർത്തരുത്. സൂചി കുത്തി പരിക്കേൽക്കാം.</span></li>
+        <li class="dont"><span>ക്ലോറിനേറ്റഡ് പ്ലാസ്റ്റിക് ബാഗ് ഉപയോഗിക്കരുത്.</span></li>
+        <li class="info"><span>മാലിന്യം എവിടെ നിന്ന് വന്നു എന്ന് ലേബലും ബാർകോഡും കാണിക്കുന്നു.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="2.2 ആശുപത്രിക്കുള്ളിലെ സുരക്ഷിത നീക്കം">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 2 · 2.2 കൈകാര്യം</span><span>Guidebook p. 57–59</span></div>
+  <h2>ആശുപത്രിക്കുള്ളിൽ മാലിന്യം സുരക്ഷിതമായി നീക്കുക</h2>
+  <div class="body dense">
+    <svg class="diagram" viewBox="0 0 940 170" role="img" aria-label="മാലിന്യ വഴി: വാർഡ്, മൂടിയ ട്രോളി, തിരക്കില്ലാത്ത വഴി, കേന്ദ്ര സംഭരണം, സംസ്കരണ കേന്ദ്ര വാഹനം.">
+      <rect class="d-flow" x="8" y="20" width="166" height="80" rx="6"/><text class="d-t" x="91" y="52" text-anchor="middle">വാർഡ് · OT · ലാബ്</text><text class="d-s" x="91" y="74" text-anchor="middle">ഉറവിടത്തിൽ വേർതിരിക്കുക</text>
+      <rect class="d-flow" x="197" y="20" width="166" height="80" rx="6"/><text class="d-t" x="280" y="52" text-anchor="middle">മൂടിയ ട്രോളി</text><text class="d-s" x="280" y="74" text-anchor="middle">മാലിന്യത്തിന് മാത്രം</text>
+      <rect class="d-flow" x="386" y="20" width="166" height="80" rx="6"/><text class="d-t" x="469" y="52" text-anchor="middle">തിരക്കില്ലാത്ത വഴി</text><text class="d-s" x="469" y="74" text-anchor="middle">OPD, ICU വഴി അല്ല</text>
+      <rect class="d-lock" x="575" y="20" width="166" height="80" rx="6"/><text class="d-t" x="658" y="52" text-anchor="middle">BMW സ്റ്റോർ</text><text class="d-s" x="658" y="74" text-anchor="middle">എപ്പോഴും പൂട്ടി സൂക്ഷിക്കണം</text>
+      <rect class="d-flow" x="764" y="20" width="166" height="80" rx="6"/><text class="d-t" x="847" y="52" text-anchor="middle">സംസ്കരണ കേന്ദ്രം</text><text class="d-s" x="847" y="74" text-anchor="middle">IMAGE വാഹനം</text>
+      <path class="d-path" d="M176 60H193" marker-end="url(#arr)"/><path class="d-path" d="M365 60H382" marker-end="url(#arr)"/><path class="d-path" d="M554 60H571" marker-end="url(#arr)"/><path class="d-path" d="M743 60H760" marker-end="url(#arr)"/>
+      <path class="d-dash" d="M8 140H930"/><text class="d-s" x="469" y="160" text-anchor="middle">വൃത്തിയുള്ള സാധനങ്ങളും ഭക്ഷണവും വേറെ വഴിയിലൂടെ.</text>
+    </svg>
+    <div class="cols">
+      <ul class="rules">
+        <li class="do"><span>ദിവസവും നിശ്ചിത സമയത്ത് മാലിന്യം ശേഖരിക്കുക.</span></li>
+        <li class="do"><span>ബയോഹസാർഡ് ലേബലുള്ള, മൂടിയ, ചക്രമുള്ള ട്രോളി ഉപയോഗിക്കുക.</span></li>
+        <li class="do"><span>സാധാരണ മാലിന്യത്തിന് വേറെ ട്രോളി, വേറെ സമയം.</span></li>
+      </ul>
+      <ul class="rules">
+        <li class="do"><span>ആശുപത്രി റൂട്ട് മാപ്പിലെ വഴി ഉപയോഗിക്കുക.</span></li>
+        <li class="do"><span>ഓരോ യാത്രയ്ക്കും ശേഷം ട്രോളി കഴുകി, അണുവിമുക്തമാക്കി, ഉണക്കുക.</span></li>
+        <li class="dont"><span>BMW സ്റ്റോറിൽ സാധാരണ മാലിന്യം വയ്ക്കരുത്.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="2.2 മാലിന്യം കൈകാര്യം ചെയ്യുന്നവരുടെ ആരോഗ്യം">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 2 · 2.2 ജീവനക്കാരുടെ സുരക്ഷ</span><span>Guidebook p. 58, 77, 121–122</span></div>
+  <h2>മാലിന്യം കൈകാര്യം ചെയ്യുന്നവരുടെ ആരോഗ്യം സംരക്ഷിക്കുക</h2>
+  <div class="body">
+    <div class="cols">
+      <div class="box">
+        <h3>മാലിന്യം കൈകാര്യം ചെയ്യുമ്പോൾ ഈ PPE ധരിക്കുക</h3>
+        <ul class="rules">
+          <li class="do"><span>ഗം ബൂട്ട്</span></li>
+          <li class="do"><span>ഹെവി-ഡ്യൂട്ടി ഗ്ലൗസ്</span></li>
+          <li class="do"><span>മാസ്ക്</span></li>
+          <li class="do"><span>കണ്ണട / നേത്ര സംരക്ഷണം</span></li>
+          <li class="do"><span>പ്ലാസ്റ്റിക് ഏപ്രൺ</span></li>
+        </ul>
+      </div>
+      <ul class="rules">
+        <li class="do"><span>ഹെപ്പറ്റൈറ്റിസ് B വാക്സിന്റെ എല്ലാ ഡോസും എടുക്കുക. ടെറ്റനസ് വാക്സിനും എടുക്കുക.</span></li>
+        <li class="do"><span>എല്ലാ വർഷവും ആരോഗ്യ പരിശോധന നടത്തുക.</span></li>
+        <li class="info"><span>നിങ്ങളുടെ വാക്സിൻ, പരിശോധന രേഖകൾ ആശുപത്രി സൂക്ഷിക്കുന്നു.</span></li>
+        <li class="do"><span>മാലിന്യ പരിപാലന പരിശീലനത്തിൽ പങ്കെടുക്കുക.</span></li>
+        <li class="warn"><span>മാലിന്യത്തിൽ നിന്ന് പരിക്കേറ്റാൽ പ്രഥമശുശ്രൂഷ ചെയ്ത് ഉടൻ സൂപ്പർവൈസറെ അറിയിക്കുക.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 3 ============ -->
+<section class="slide divider" data-title="മൊഡ്യൂൾ 3: സ്പിൽ കൈകാര്യം ചെയ്യൽ">
+  <div class="num">3</div>
+  <h2>സ്പിൽ കൈകാര്യം ചെയ്യൽ</h2>
+  <p>രക്തം, ശരീരദ്രവങ്ങൾ, രാസവസ്തുക്കൾ എന്നിവ തറയിലോ പ്രതലത്തിലോ വീഴുമ്പോൾ. വേഗം പ്രവർത്തിക്കുക. ആദ്യം സ്വയം സംരക്ഷിക്കുക.</p>
+  <p class="when">40 മിനിറ്റ് · 3.1 രക്തം, ശരീരദ്രവം · 3.2 സ്പിൽ കിറ്റ് · രാസവസ്തു, മെർക്കുറി</p>
+</section>
+
+<section class="slide" data-title="3.1 ചെറിയ സ്പിൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 3 · 3.1 രക്തം, ശരീരദ്രവം</span><span>Guidebook p. 112</span></div>
+  <h2>ചെറിയ സ്പിൽ: കുറച്ച് തുള്ളി, 10 ml-ൽ താഴെ</h2>
+  <div class="body dense">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>ഹെവി-ഡ്യൂട്ടി ഗ്ലൗസും മറ്റ് PPE-യും ധരിക്കുക.</span></li>
+        <li><span>സൂചിയോ ഗ്ലാസോ ഉണ്ടെങ്കിൽ ഫോർസെപ്സ് കൊണ്ട് എടുത്ത് പഞ്ചർ-പ്രൂഫ് പെട്ടിയിൽ ഇടുക.</span></li>
+        <li><span>1% സോഡിയം ഹൈപ്പോക്ലോറൈറ്റിൽ നനച്ച പത്രമോ ആഗിരണ കടലാസോ കൊണ്ട് തുടയ്ക്കുക.</span></li>
+        <li><span>കടലാസ് മഞ്ഞ ബാഗിൽ ഇടുക. അഴുക്ക് കാണാതാകുന്നതുവരെ ആവർത്തിക്കുക.</span></li>
+        <li><span>1% ഹൈപ്പോക്ലോറൈറ്റ് കൊണ്ട് മോപ്പ് ചെയ്യുക. സ്വാഭാവികമായി ഉണങ്ങാൻ വിടുക.</span></li>
+        <li><span>ഗ്ലൗസ് ഊരുക. കൈ വൃത്തിയാക്കുക.</span></li>
+      </ol>
+      <div class="box" style="display:grid;gap:calc(var(--u)*1)">
+        <div><span class="chip low">1% · 500 ppm</span></div>
+        <p>10 ml 5% ബ്ലീച്ച് + 990 ml വെള്ളം.</p>
+        <ul class="rules">
+          <li class="dont"><span>ഗ്ലാസോ സൂചിയോ കൈ കൊണ്ട് എടുക്കരുത്.</span></li>
+          <li class="dont"><span>തുണി കൊണ്ട് ഉണക്കരുത്. സ്വയം ഉണങ്ങട്ടെ.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.1 വലിയ സ്പിൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 3 · 3.1 രക്തം, ശരീരദ്രവം</span><span>Guidebook p. 112</span></div>
+  <h2>വലിയ സ്പിൽ: 10 ml-ൽ കൂടുതൽ</h2>
+  <div class="body xdense">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>സ്ഥലം അടയ്ക്കുക. ആളുകളെ അകറ്റി നിർത്തുക.</span></li>
+        <li><span>ഹെവി-ഡ്യൂട്ടി ഗ്ലൗസ്, ഏപ്രൺ, മാസ്ക്, ഷൂ കവർ എന്നിവ ധരിക്കുക.</span></li>
+        <li><span>സ്പിൽ ആഗിരണ കടലാസ്, പാഡ്, തുണി എന്നിവ കൊണ്ട് മൂടുക. ഇത് പടരുന്നത് തടയും.</span></li>
+        <li><span>10% സോഡിയം ഹൈപ്പോക്ലോറൈറ്റ് ഒഴിക്കുക. സ്പില്ലും കടലാസും പൂർണ്ണമായി നനയണം. (അല്ലെങ്കിൽ ക്ലോറിൻ തരികൾ വിതറി മൂടുക.)</span></li>
+        <li><span>5 മിനിറ്റ് കാത്തിരിക്കുക (സമ്പർക്ക സമയം).</span></li>
+        <li><span>കടലാസ് എടുത്ത് മഞ്ഞ ബയോഹസാർഡ് ബാഗിൽ ഇടുക.</span></li>
+        <li><span>അഴുക്ക് കാണാതാകുന്നതുവരെ 10% ലായനി കൊണ്ട് തുടയ്ക്കുക. ഒരു തവണ മോപ്പ് ചെയ്ത് സ്വയം ഉണങ്ങാൻ വിടുക.</span></li>
+        <li><span>ഉപയോഗിച്ചതെല്ലാം മഞ്ഞ ബാഗിൽ ഇടുക. PPE ഊരി കൈ വൃത്തിയാക്കുക.</span></li>
+      </ol>
+      <div class="box" style="display:grid;gap:calc(var(--u)*1)">
+        <div><span class="chip high">10% · 5000 ppm</span></div>
+        <p>100 ml 5% ബ്ലീച്ച് + 900 ml വെള്ളം.</p>
+        <div class="callout"><svg class="sg"><use href="#sg-warn"/></svg><span>5 മിനിറ്റ് സമ്പർക്ക സമയം കുറയ്ക്കരുത്. രോഗാണുക്കളെ നശിപ്പിക്കാൻ ക്ലോറിന് ഈ സമയം ആവശ്യമാണ്.</span></div>
+        <ul class="rules"><li class="do"><span>സ്പില്ലിനെ കുറിച്ച് സൂപ്പർവൈസറെ അറിയിക്കുക.</span></li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.2 സ്പിൽ കിറ്റ്">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 3 · 3.2 സ്പിൽ കിറ്റ്</span><span>Guidebook p. 112–113</span></div>
+  <h2>സ്പിൽ കിറ്റിൽ എന്തെല്ലാം വേണം</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div class="box">
+        <h3>രക്ത / ശരീരദ്രവ സ്പിൽ കിറ്റ്</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="kit1"><span>ഹെവി-ഡ്യൂട്ടി ഗ്ലൗസ്: 2 ജോടി</span></label></li>
+          <li><label><input type="checkbox" id="kit2"><span>പ്ലാസ്റ്റിക് ഏപ്രൺ</span></label></li>
+          <li><label><input type="checkbox" id="kit3"><span>മാസ്കും കണ്ണടയും</span></label></li>
+          <li><label><input type="checkbox" id="kit4"><span>ഷൂ കവർ (അല്ലെങ്കിൽ പ്ലാസ്റ്റിക് കവർ)</span></label></li>
+          <li><label><input type="checkbox" id="kit5"><span>ആഗിരണ വസ്തു: പത്രം, ബ്ലോട്ടിംഗ് പേപ്പർ, പാഡ്</span></label></li>
+          <li><label><input type="checkbox" id="kit6"><span>ഇരുണ്ട കുപ്പിയിൽ 10% ഹൈപ്പോക്ലോറൈറ്റ്, അല്ലെങ്കിൽ ക്ലോറിൻ തരികൾ</span></label></li>
+          <li><label><input type="checkbox" id="kit7"><span>ഫോർസെപ്സ് / ടോങ്സ്, സ്കൂപ്പ്</span></label></li>
+          <li><label><input type="checkbox" id="kit8"><span>മഞ്ഞ ബയോഹസാർഡ് ബാഗ്, പഞ്ചർ-പ്രൂഫ് പെട്ടി</span></label></li>
+        </ul>
+      </div>
+      <ul class="rules">
+        <li class="do"><span>ഓരോ വാർഡിലും ലാബിലും സാമ്പിൾ കളക്ഷൻ റൂമിലും ലേബർ റൂമിലും OT-യിലും സ്പിൽ കിറ്റ് സൂക്ഷിക്കുക.</span></li>
+        <li class="do"><span>ഉപയോഗിച്ച ഉടൻ കിറ്റ് വീണ്ടും നിറച്ച് പഴയ സ്ഥലത്ത് വയ്ക്കുക.</span></li>
+        <li class="do"><span>ഹൈപ്പോക്ലോറൈറ്റ് കുപ്പിയിൽ തീയതി എഴുതുക. 30 ദിവസത്തിനു ശേഷം മാറ്റുക.</span></li>
+        <li class="info"><span>സൂക്ഷിച്ചുവച്ച ഹൈപ്പോക്ലോറൈറ്റിന് 30 ദിവസത്തിൽ പകുതി വീര്യം നഷ്ടപ്പെടും.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.2 രാസവസ്തു സ്പിൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 3 · രാസവസ്തു സ്പിൽ</span><span>Guidebook p. 113–116</span></div>
+  <h2>രാസവസ്തു സ്പിൽ: അഞ്ച് ഘട്ടങ്ങൾ</h2>
+  <div class="body dense">
+    <div class="cols">
+      <ol class="steps">
+        <li><span><b>സ്ഥലം സുരക്ഷിതമാക്കുക.</b> ആളുകളെ അകറ്റുക. കുപ്പി നിവർത്തി വയ്ക്കുക, അല്ലെങ്കിൽ വലിയ പാത്രത്തിൽ ഇറക്കിവയ്ക്കുക.</span></li>
+        <li><span><b>സുരക്ഷാ വിവര ഷീറ്റ് (MSDS) വായിക്കുക.</b> വൃത്തിയാക്കേണ്ട രീതിയും പ്രഥമശുശ്രൂഷയും അതിലുണ്ട്.</span></li>
+        <li><span><b>വൃത്തിയാക്കുക.</b> നൈട്രൈൽ ഗ്ലൗസും കണ്ണടയും ധരിക്കുക. അരികിൽ നിന്ന് അകത്തേക്ക് ആഗിരണ വസ്തു വിതറുക. ഡസ്റ്റ് പാൻ കൊണ്ട് ലേബലുള്ള ബിന്നിൽ ശേഖരിക്കുക.</span></li>
+        <li><span><b>സൂപ്പർവൈസറെ അറിയിക്കുക.</b></span></li>
+        <li><span><b>രാസവസ്തു സ്പിൽ കിറ്റ് വീണ്ടും നിറയ്ക്കുക.</b></span></li>
+      </ol>
+      <ul class="rules">
+        <li class="warn"><span>പെട്ടെന്ന് തീ പിടിക്കുന്നവ (ഉദാ: സ്പിരിറ്റ്): ആദ്യം എല്ലാ വൈദ്യുത, ചൂട് ഉപകരണങ്ങളും ഓഫ് ചെയ്യുക.</span></li>
+        <li class="do"><span>ആസിഡ്: സോഡിയം ബൈകാർബണേറ്റ് പുറത്തു നിന്ന് അകത്തേക്ക് പതുക്കെ വിതറുക.</span></li>
+        <li class="dont"><span>പൊടിയോ വാതകമോ ശ്വസിക്കരുത്.</span></li>
+        <li class="dont"><span>രാസവസ്തു സ്പില്ലിൽ വാക്വം ക്ലീനർ ഉപയോഗിക്കരുത്.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="3.2 മെർക്കുറി സ്പിൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 3 · രാസവസ്തു സ്പിൽ</span><span>Guidebook p. 67–70</span></div>
+  <h2>തെർമോമീറ്ററോ BP ഉപകരണമോ പൊട്ടിയാൽ: മെർക്കുറി സ്പിൽ</h2>
+  <div class="body xdense">
+    <div class="callout"><svg class="sg"><use href="#sg-warn"/></svg><span><b class="label">മുന്നറിയിപ്പ്</b>മെർക്കുറി ബാഷ്പം വിഷമാണ്. അത് കാണാനോ മണക്കാനോ കഴിയില്ല. തലച്ചോറിനും വൃക്കയ്ക്കും ഗർഭസ്ഥ ശിശുവിനും ദോഷം ചെയ്യും.</span></div>
+    <div class="cols">
+      <ol class="steps">
+        <li><span>എല്ലാവരെയും സ്ഥലത്തു നിന്ന് മാറ്റുക. ജനലുകൾ തുറക്കുക.</span></li>
+        <li><span>മോതിരം, വാച്ച്, മറ്റ് ആഭരണങ്ങൾ ഊരുക.</span></li>
+        <li><span>മാസ്കും റബ്ബർ ഗ്ലൗസും ധരിക്കുക.</span></li>
+        <li><span>പൊട്ടിയ ഗ്ലാസ് ശ്രദ്ധയോടെ എടുത്ത് പഞ്ചർ-പ്രൂഫ് പെട്ടിയിൽ ഇടുക.</span></li>
+        <li><span>ടോർച്ച് ഉപയോഗിച്ച് മെർക്കുറി തുള്ളികൾ കണ്ടെത്തുക. കാർഡ് കൊണ്ട് ഒന്നിച്ചു കൂട്ടുക.</span></li>
+      </ol>
+      <ol class="steps" style="counter-reset:s 5">
+        <li><span>സൂചിയില്ലാത്ത സിറിഞ്ച് കൊണ്ട് വലിച്ചെടുക്കുക. പകുതി വെള്ളമുള്ള കുപ്പിയിൽ ഇട്ട് മുറുക്കി അടയ്ക്കുക.</span></li>
+        <li><span>വളരെ ചെറിയ തുള്ളികൾ ഒട്ടുന്ന ടേപ്പ് കൊണ്ട് എടുക്കുക.</span></li>
+        <li><span>ഉപയോഗിച്ചതെല്ലാം ബാഗിൽ സീൽ ചെയ്യുക. "അപകടകരമായ മാലിന്യം, ശ്രദ്ധയോടെ കൈകാര്യം ചെയ്യുക" എന്ന് ലേബൽ ചെയ്യുക.</span></li>
+        <li><span>മെർക്കുറി സ്പിൽ കിറ്റ് വീണ്ടും നിറയ്ക്കുക.</span></li>
+      </ol>
+    </div>
+    <ul class="rules">
+      <li class="dont"><span>ചൂലോ വാക്വം ക്ലീനറോ ഉപയോഗിക്കരുത്. വെറും കൈ കൊണ്ട് മെർക്കുറി തൊടരുത്. ഓടയിൽ ഒഴിക്കരുത്.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ MODULE 4 ============ -->
+<section class="slide divider" data-title="മൊഡ്യൂൾ 4: അണുബാധ പ്രതിരോധം">
+  <div class="num">4</div>
+  <h2>അണുബാധ പ്രതിരോധം, നിയന്ത്രണം, ജീവനക്കാരുടെ സുരക്ഷ</h2>
+  <p>കൈ ശുചിത്വം. വ്യക്തിഗത സുരക്ഷാ ഉപകരണങ്ങൾ (PPE). ഷാർപ്സും സൂചി കുത്തിയുള്ള പരിക്കും.</p>
+  <p class="when">40 മിനിറ്റ് · 4.1 കൈ ശുചിത്വം · 4.2 PPE · 4.3 ഷാർപ്സ്, NSI</p>
+</section>
+
+<section class="slide" data-title="4.1 ഹാൻഡ് റബോ കൈ കഴുകലോ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.1 കൈ ശുചിത്വം</span><span>Guidebook p. 83–88</span></div>
+  <h2>ഹാൻഡ് റബോ, സോപ്പിട്ട് കഴുകലോ?</h2>
+  <div class="body dense">
+    <p class="lead">ആശുപത്രിയിലെ അണുബാധകളുടെ പ്രധാന കാരണം അഴുക്കായ കൈകളാണ്.</p>
+    <div class="cols">
+      <div class="box">
+        <h3>സോപ്പും വെള്ളവും · 40–60 സെക്കൻഡ്</h3>
+        <ul class="rules">
+          <li class="do"><span>കൈയിൽ അഴുക്ക് കാണുമ്പോൾ.</span></li>
+          <li class="do"><span>കൈയിൽ രക്തമോ ശരീരദ്രവമോ ഉള്ളപ്പോൾ.</span></li>
+          <li class="do"><span>ടോയ്‌ലറ്റ് ഉപയോഗിച്ച ശേഷം.</span></li>
+          <li class="do"><span>വയറിളക്ക രോഗം പടരുമ്പോൾ.</span></li>
+        </ul>
+        <p class="muted small" style="margin-top:.6em">ഓരോ ഘട്ടവും 5 തവണ. വൃത്തിയുള്ള പേപ്പർ കൊണ്ട് ഉണക്കുക. എൽബോ ടാപ്പ് അല്ലെങ്കിൽ അതേ പേപ്പർ കൊണ്ട് ടാപ്പ് അടയ്ക്കുക.</p>
+      </div>
+      <div class="box">
+        <h3>ആൽക്കഹോൾ ഹാൻഡ് റബ് · 20–30 സെക്കൻഡ്</h3>
+        <ul class="rules">
+          <li class="do"><span>കൈയിൽ അഴുക്ക് കാണാത്തപ്പോൾ.</span></li>
+          <li class="do"><span>രോഗിയെ തൊടുന്നതിനു മുൻപും ശേഷവും.</span></li>
+          <li class="do"><span>ഗ്ലൗസ് ഊരിയ ശേഷം.</span></li>
+          <li class="do"><span>രോഗിയുടെ ചുറ്റുമുള്ള വസ്തുക്കൾ തൊട്ട ശേഷം.</span></li>
+        </ul>
+        <p class="muted small" style="margin-top:.6em">രണ്ട് കൈകളും മുഴുവൻ നനയാൻ വേണ്ടത്ര എടുക്കുക. ഉണങ്ങുന്നതുവരെ തിരുമ്മുക. ഉണങ്ങിയ കൈയിൽ മാത്രം.</p>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="dont"><span>സോപ്പും ഹാൻഡ് റബ്ബും ഒരേ സമയം ഉപയോഗിക്കരുത്.</span></li>
+      <li class="do"><span>നഖം ചെറുതാക്കി വയ്ക്കുക. മോതിരം, വാച്ച്, വള എന്നിവ ഊരുക.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.1 കൈ ശുചിത്വത്തിന്റെ ആറ് ഘട്ടങ്ങൾ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.1 കൈ ശുചിത്വം · നഴ്സുമാർക്കും അറ്റൻഡർമാർക്കും</span><span>Guidebook p. 87–88 (WHO)</span></div>
+  <h2>കൈ വൃത്തിയാക്കാൻ ആറ് ഘട്ടങ്ങൾ</h2>
+  <div class="body">
+    <div class="tiles">
+      <div class="tile"><b class="n">1</b><span>ഉള്ളംകൈകൾ തമ്മിൽ ഉരസുക.</span></div>
+      <div class="tile"><b class="n">2</b><span>ഒരു ഉള്ളംകൈ മറ്റേ കൈയുടെ പുറത്ത് വച്ച് വിരലുകൾ കോർത്ത് ഉരസുക. കൈ മാറ്റുക.</span></div>
+      <div class="tile"><b class="n">3</b><span>ഉള്ളംകൈകൾ ചേർത്ത് വിരലുകൾ കോർത്ത് ഉരസുക.</span></div>
+      <div class="tile"><b class="n">4</b><span>വിരലുകൾ കൊളുത്തി, വിരലുകളുടെ പുറംഭാഗം മറ്റേ ഉള്ളംകൈയിൽ ഉരസുക.</span></div>
+      <div class="tile"><b class="n">5</b><span>ഒരു തള്ളവിരൽ മറ്റേ കൈയിൽ പിടിച്ച് വട്ടത്തിൽ ഉരസുക. കൈ മാറ്റുക.</span></div>
+      <div class="tile"><b class="n">6</b><span>വിരൽത്തുമ്പുകൾ മറ്റേ ഉള്ളംകൈയിൽ വട്ടത്തിൽ ഉരസുക. കൈ മാറ്റുക.</span></div>
+    </div>
+    <ul class="rules">
+      <li class="info"><span>സോപ്പിനും ഹാൻഡ് റബ്ബിനും ഇതേ ആറ് ഘട്ടങ്ങൾ തന്നെ.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.1 അഞ്ച് നിമിഷങ്ങൾ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.1 കൈ ശുചിത്വം · സ്റ്റാഫ് നഴ്സുമാർ</span><span>Guidebook p. 84–86, Figure 32 (WHO)</span></div>
+  <h2>കൈ ശുചിത്വത്തിന്റെ WHO അഞ്ച് നിമിഷങ്ങൾ</h2>
+  <div class="body">
+    <div class="cols mo-layout">
+      <svg class="diagram" viewBox="0 0 360 400" role="img" aria-label="രോഗിയുടെ കട്ടിലിന്റെ രൂപരേഖ. 1: രോഗീ മേഖലയിലേക്ക് കയറുമ്പോൾ. 2, 3: രോഗിയുടെ അടുത്ത്. 4: മേഖലയിൽ നിന്ന് ഇറങ്ങുമ്പോൾ. 5: ബെഡ്സൈഡ് ടേബിളിൽ.">
+        <rect x="8" y="8" width="344" height="384" rx="6" style="fill:var(--paper);stroke:var(--rule);stroke-width:2"/>
+        <text class="d-s" x="20" y="30">ആരോഗ്യപരിചരണ സ്ഥലം</text>
+        <rect x="76" y="56" width="236" height="300" rx="22" class="d-ring"/>
+        <text class="d-t" x="194" y="48" text-anchor="middle">രോഗീ മേഖല</text>
+        <rect x="130" y="92" width="96" height="214" rx="8" class="d-bed"/>
+        <rect x="146" y="102" width="64" height="30" rx="6" style="fill:var(--panel);stroke:var(--ink-2);stroke-width:1.2"/>
+        <path d="M134 186H222" style="stroke:var(--ink-2);stroke-width:1.2"/>
+        <circle cx="178" cy="150" r="13" style="fill:var(--panel);stroke:var(--ink);stroke-width:1.5"/>
+        <rect x="240" y="104" width="50" height="48" rx="4" class="d-table"/>
+        <text class="d-s" x="265" y="132" text-anchor="middle">മേശ</text>
+        <circle cx="108" cy="112" r="7" style="fill:none;stroke:var(--ink-2);stroke-width:2"/>
+        <path d="M108 119V170" style="stroke:var(--ink-2);stroke-width:2"/>
+        <text class="d-s" x="98" y="186">IV</text>
+        <path class="d-path" d="M14 220H62" marker-end="url(#arr)"/>
+        <text class="d-s" x="14" y="246">കയറുമ്പോൾ</text>
+        <path class="d-path" d="M66 320H18" marker-end="url(#arr)"/>
+        <text class="d-s" x="14" y="346">ഇറങ്ങുമ്പോൾ</text>
+        <g style="font:700 17px var(--display)">
+          <circle cx="76" cy="220" r="16" class="d-start"/><text x="76" y="226" text-anchor="middle" style="fill:var(--on-strong)">1</text>
+          <circle cx="146" cy="204" r="16" class="d-start"/><text x="146" y="210" text-anchor="middle" style="fill:var(--on-strong)">2</text>
+          <circle cx="206" cy="262" r="16" class="d-start"/><text x="206" y="268" text-anchor="middle" style="fill:var(--on-strong)">3</text>
+          <circle cx="76" cy="320" r="16" class="d-start"/><text x="76" y="326" text-anchor="middle" style="fill:var(--on-strong)">4</text>
+          <circle cx="265" cy="176" r="16" class="d-start"/><text x="265" y="182" text-anchor="middle" style="fill:var(--on-strong)">5</text>
+        </g>
+      </svg>
+      <div class="mlist">
+        <div class="mrow"><b class="n">1</b><div><h3>രോഗിയെ തൊടുന്നതിനു മുൻപ്</h3><p><b>നഴ്സ്:</b> പൾസ്, BP നോക്കുന്നതിനു മുൻപ്. <b>അറ്റൻഡർ:</b> രോഗിയെ നീക്കാൻ സഹായിക്കുന്നതിനു മുൻപ്.</p></div></div>
+        <div class="mrow"><b class="n">2</b><div><h3>വൃത്തിയുള്ള / അണുവിമുക്ത ജോലിക്ക് മുൻപ്</h3><p><b>നഴ്സ്:</b> ഇഞ്ചക്ഷൻ, ഡ്രസ്സിംഗ്, കത്തീറ്റർ എന്നിവയ്ക്ക് മുൻപ്. <b>അറ്റൻഡർ:</b> വായ് വൃത്തിയാക്കലിനും ഭക്ഷണം നൽകലിനും മുൻപ്.</p></div></div>
+        <div class="mrow"><b class="n">3</b><div><h3>ശരീരദ്രവ സമ്പർക്ക സാധ്യതയ്ക്ക് ശേഷം</h3><p><b>നഴ്സ്:</b> രക്തമെടുത്ത ശേഷം, ഡ്രസ്സിംഗ് മാറ്റിയ ശേഷം. <b>അറ്റൻഡർ:</b> മൂത്രമോ മലമോ വൃത്തിയാക്കിയ ശേഷം. ഗ്ലൗസ് ഊരിയ ശേഷവും.</p></div></div>
+        <div class="mrow"><b class="n">4</b><div><h3>രോഗിയെ തൊട്ട ശേഷം</h3><p><b>നഴ്സ്:</b> പരിശോധനയ്ക്ക് ശേഷം. <b>അറ്റൻഡർ:</b> രോഗിയെ നീക്കാൻ സഹായിച്ച ശേഷം.</p></div></div>
+        <div class="mrow"><b class="n">5</b><div><h3>രോഗിയുടെ ചുറ്റുപാട് തൊട്ട ശേഷം</h3><p><b>നഴ്സ്:</b> ഡ്രിപ്പ് നിരക്ക് മാറ്റിയ ശേഷം. <b>അറ്റൻഡർ:</b> ഒഴിഞ്ഞ കട്ടിലിലെ ഷീറ്റ് മാറ്റിയ ശേഷം. രോഗിയെ തൊട്ടില്ലെങ്കിലും.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="4.2 ശരിയായ PPE തിരഞ്ഞെടുക്കൽ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.2 PPE</span><span>Guidebook p. 93–101, Table 16</span></div>
+  <h2>ജോലിക്ക് അനുസരിച്ച് ശരിയായ PPE തിരഞ്ഞെടുക്കുക</h2>
+  <div class="body dense">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>ജോലി</th><th>ഗ്ലൗസ്</th><th>മറ്റ് PPE</th></tr></thead>
+      <tbody>
+        <tr><td>രോഗിക്ക് സാധാരണ സഹായം (ശരീരദ്രവം ഇല്ല)</td><td>ഗ്ലൗസ് വേണ്ട</td><td>—</td></tr>
+        <tr><td>രക്തം, ശരീരദ്രവം, മൂത്രം, സാമ്പിൾ തൊടുമ്പോൾ</td><td>എക്സാമിനേഷൻ ഗ്ലൗസ് (വൃത്തിയുള്ള, അണുവിമുക്തമല്ലാത്തത്)</td><td>തെറിക്കാൻ സാധ്യതയെങ്കിൽ ഏപ്രൺ</td></tr>
+        <tr><td>തറ, ടോയ്‌ലറ്റ്, പ്രതലങ്ങൾ വൃത്തിയാക്കൽ</td><td>ഹെവി-ഡ്യൂട്ടി ഗ്ലൗസ്</td><td>ഏപ്രൺ · നനഞ്ഞ സ്ഥലത്ത് ഗം ബൂട്ട്</td></tr>
+        <tr><td>മാലിന്യം കൈകാര്യം ചെയ്യൽ, നീക്കൽ</td><td>ഹെവി-ഡ്യൂട്ടി ഗ്ലൗസ്</td><td>ഗം ബൂട്ട് · മാസ്ക് · കണ്ണട · ഏപ്രൺ</td></tr>
+        <tr><td>സ്പിൽ വൃത്തിയാക്കൽ</td><td>ഹെവി-ഡ്യൂട്ടി ഗ്ലൗസ്</td><td>ഏപ്രൺ · മാസ്ക് · ഷൂ കവർ</td></tr>
+        <tr><td>TB, മീസിൽസ് രോഗി (വായുവിലൂടെ പകരുന്നത്)</td><td>ജോലിക്ക് അനുസരിച്ച്</td><td>N95 മാസ്ക്</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ul class="rules">
+      <li class="dont"><span>വൃത്തിയാക്കലിന് എക്സാമിനേഷൻ ഗ്ലൗസ് ഉപയോഗിക്കരുത്. അവ പെട്ടെന്ന് കീറും.</span></li>
+      <li class="dont"><span>ഡിസ്പോസബിൾ ഗ്ലൗസ് വീണ്ടും ഉപയോഗിക്കരുത്. PPE പങ്കുവയ്ക്കരുത്.</span></li>
+      <li class="dont"><span>അഴുക്കായ ഗ്ലൗസ് കൊണ്ട് മുഖമോ മാസ്കോ തൊടരുത്.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.2 PPE ധരിക്കലും ഊരലും">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.2 PPE</span><span>Guidebook p. 96–101 · CDC sequence</span></div>
+  <h2>PPE ശരിയായ ക്രമത്തിൽ ധരിക്കുകയും ഊരുകയും ചെയ്യുക</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div class="box">
+        <h3>ധരിക്കൽ (Donning)</h3>
+        <ol class="steps">
+          <li><span>കൈ വൃത്തിയാക്കുക.</span></li>
+          <li><span>ഗൗൺ അല്ലെങ്കിൽ ഏപ്രൺ ധരിക്കുക. കഴുത്തിലും അരയിലും കെട്ടുക.</span></li>
+          <li><span>മാസ്ക് ധരിക്കുക. ലോഹ സ്ട്രിപ്പ് മൂക്കിൽ അമർത്തുക.</span></li>
+          <li><span>കണ്ണടയോ ഫേസ് ഷീൽഡോ ധരിക്കുക.</span></li>
+          <li><span>ഗ്ലൗസ് ധരിക്കുക. ഗൗണിന്റെ കൈയറ്റത്തിനു മുകളിലേക്ക് വലിക്കുക.</span></li>
+        </ol>
+      </div>
+      <div class="box">
+        <h3>ഊരൽ (Doffing)</h3>
+        <ol class="steps">
+          <li><span>ഗ്ലൗസ് ഊരുക. പുറംഭാഗം വെറും തൊലിയിൽ തൊടരുത്.</span></li>
+          <li><span>കണ്ണടയോ ഫേസ് ഷീൽഡോ സ്ട്രാപ്പിൽ പിടിച്ച് ഊരുക.</span></li>
+          <li><span>ഗൗൺ ഉൾഭാഗം പുറത്താകും വിധം ചുരുട്ടി ശരീരത്തിൽ നിന്ന് അകറ്റി ഊരുക.</span></li>
+          <li><span>മാസ്ക് ചരടിലോ ഇയർ ലൂപ്പിലോ പിടിച്ച് ഊരുക. മുൻഭാഗം തൊടരുത്.</span></li>
+          <li><span>കൈ വൃത്തിയാക്കുക.</span></li>
+        </ol>
+      </div>
+    </div>
+    <ul class="rules">
+      <li class="warn"><span>ഉപയോഗിച്ച PPE-യുടെ പുറംഭാഗം അഴുക്കാണ്. ഏറ്റവും അഴുക്കായത് ആദ്യം ഊരുക.</span></li>
+      <li class="do"><span>റബ്ബർ ഗ്ലൗസ് ഊരുന്നതിനു മുൻപ് സോപ്പും വെള്ളവും കൊണ്ട് കഴുകുക. ഉപയോഗിച്ച PPE ശരിയായ ബാഗിൽ ഇടുക.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="4.3 ഷാർപ്സ് സുരക്ഷ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.3 ഷാർപ്സ്</span><span>Guidebook p. 61–62</span></div>
+  <h2>ഷാർപ്സ് (മൂർച്ചയുള്ള വസ്തുക്കൾ) സുരക്ഷ</h2>
+  <div class="body dense">
+    <div class="callout dont"><svg class="sg"><use href="#sg-dont"/></svg><span><b class="label">ഒരിക്കലും റീക്യാപ് ചെയ്യരുത്</b>ഉപയോഗിച്ച സൂചിയിൽ രണ്ട് കൈ കൊണ്ട് അടപ്പ് തിരികെ ഇടരുത്. മിക്ക സൂചി പരിക്കുകളും റീക്യാപ്പിംഗിനിടെയാണ്.</span></div>
+    <div class="cols">
+      <ul class="rules">
+        <li class="dont"><span>സൂചി വളയ്ക്കുകയോ ഒടിക്കുകയോ ചെയ്യരുത്.</span></li>
+        <li class="dont"><span>ഷാർപ്സ് കൈയിൽ നിന്ന് കൈയിലേക്ക് കൈമാറരുത്.</span></li>
+        <li class="dont"><span>ഷാർപ്സ് കൈയിൽ പിടിച്ച് നടക്കരുത്.</span></li>
+        <li class="dont"><span>കട്ടിലിലോ ട്രേയിലോ തറയിലോ ഷാർപ്സ് ഇട്ടിട്ടു പോകരുത്.</span></li>
+      </ul>
+      <ul class="rules">
+        <li class="do"><span>ഉപയോഗിച്ച ഉടൻ നീഡിൽ കട്ടർ കൊണ്ട് സൂചി മുറിക്കുക.</span></li>
+        <li class="do"><span>ഉപയോഗിച്ച സ്ഥലത്തു തന്നെ വെള്ള പെട്ടിയിൽ ഷാർപ്സ് ഇടുക.</span></li>
+        <li class="do"><span>പൊട്ടിയ ഗ്ലാസ് ഫോർസെപ്സ്, ടോങ്സ്, ബ്രഷും ഡസ്റ്റ് പാനും കൊണ്ട് എടുക്കുക.</span></li>
+        <li class="do"><span>രോഗി അസ്വസ്ഥനാണെങ്കിൽ ഷാർപ്സ് ഉപയോഗിക്കുന്നതിനു മുൻപ് സഹായം തേടുക.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="4.3 സൂചി പരിക്ക്: പ്രഥമശുശ്രൂഷ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.3 NSI</span><span>Guidebook p. 63–64, Table 12</span></div>
+  <h2>സൂചി കുത്തുകയോ ദ്രവം തെറിക്കുകയോ ചെയ്താൽ: ഉടൻ പ്രഥമശുശ്രൂഷ</h2>
+  <div class="body dense">
+    <div class="cols three">
+      <div class="box">
+        <h3>തൊലി: മുറിവ്, കുത്ത്</h3>
+        <ul class="rules">
+          <li class="do"><span>ഗ്ലൗസ് ഊരുക.</span></li>
+          <li class="do"><span>ഒഴുകുന്ന വെള്ളവും സോപ്പും കൊണ്ട് ഉടൻ കഴുകുക.</span></li>
+          <li class="dont"><span>മുറിവ് ഞെക്കരുത്.</span></li>
+          <li class="dont"><span>ഉരച്ചു കഴുകരുത്.</span></li>
+          <li class="dont"><span>വിരൽ വായിൽ വയ്ക്കരുത്.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>കണ്ണ്</h3>
+        <ul class="rules">
+          <li class="do"><span>ശുദ്ധജലമോ നോർമൽ സലൈനോ കൊണ്ട് ഉടൻ കണ്ണ് കഴുകുക.</span></li>
+          <li class="do"><span>കഴുകുമ്പോൾ കോൺടാക്ട് ലെൻസ് ഊരരുത്. ശേഷം ഊരുക.</span></li>
+          <li class="dont"><span>കണ്ണിൽ സോപ്പോ അണുനാശിനിയോ ഉപയോഗിക്കരുത്.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>വായ്</h3>
+        <ul class="rules">
+          <li class="do"><span>ദ്രവം ഉടൻ തുപ്പിക്കളയുക.</span></li>
+          <li class="do"><span>വെള്ളമോ സലൈനോ കൊണ്ട് കുലുക്കുഴിഞ്ഞ് തുപ്പുക. പലതവണ ആവർത്തിക്കുക.</span></li>
+          <li class="dont"><span>വായിൽ സോപ്പോ അണുനാശിനിയോ ഉപയോഗിക്കരുത്.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout dont"><svg class="sg"><use href="#sg-dont"/></svg><span>മുറിവിൽ ബ്ലീച്ച്, ആൽക്കഹോൾ, ബീറ്റാഡിൻ, മറ്റ് ആന്റിസെപ്റ്റിക്കുകൾ ഒഴിക്കരുത്. പരിഭ്രമിക്കരുത്.</span></div>
+  </div>
+</section>
+
+<section class="slide" data-title="4.3 റിപ്പോർട്ടിംഗും PEP-യും">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 4 · 4.3 NSI</span><span>Guidebook p. 64–66</span></div>
+  <h2>ഉടൻ അറിയിക്കുക: PEP ചികിത്സ</h2>
+  <div class="body xdense">
+    <div class="timeline">
+      <div class="hot"><b>0 മണിക്കൂർ</b>പ്രഥമശുശ്രൂഷ. സൂപ്പർവൈസറെ അറിയിക്കുക.</div>
+      <div class="hot"><b>2 മണിക്കൂർ</b>HIV-ക്കുള്ള PEP തുടങ്ങാൻ ഏറ്റവും നല്ല സമയം.</div>
+      <div><b>24 മണിക്കൂർ</b>ഹെപ്പറ്റൈറ്റിസ് B ചികിത്സ ഇതിനു മുൻപ് തുടങ്ങുക.</div>
+      <div><b>72 മണിക്കൂർ</b>ഇതിനു ശേഷം HIV PEP ഫലിക്കില്ല.</div>
+    </div>
+    <div class="cols">
+      <ol class="steps">
+        <li><span>വാർഡ് സിസ്റ്ററെയോ സൂപ്പർവൈസറെയോ ഉടൻ അറിയിക്കുക.</span></li>
+        <li><span>കാഷ്വാലിറ്റി മെഡിക്കൽ ഓഫീസറെയോ നിയുക്ത ഡോക്ടറെയോ കാണുക.</span></li>
+        <li><span>സൂചിയോ രക്തമോ ഏത് രോഗിയുടേതാണെന്ന് അറിയാമെങ്കിൽ ഡോക്ടറോട് പറയുക.</span></li>
+        <li><span>ഡോക്ടർ അപകടസാധ്യത വിലയിരുത്തി PEP തീരുമാനിക്കും.</span></li>
+        <li><span>സൂചി പരിക്ക് റിപ്പോർട്ട് ഫോം പൂരിപ്പിക്കുക.</span></li>
+        <li><span>എല്ലാ ഫോളോ-അപ്പ് സന്ദർശനങ്ങൾക്കും പരിശോധനകൾക്കും പോകുക.</span></li>
+      </ol>
+      <ul class="rules">
+        <li class="info"><span>എല്ലാ പരിക്കിനും മരുന്ന് വേണ്ടിവരില്ല. ഡോക്ടർ തീരുമാനിക്കും.</span></li>
+        <li class="info"><span>നിങ്ങളുടെ പരിശോധനാ ഫലം രഹസ്യമായി സൂക്ഷിക്കും.</span></li>
+        <li class="do"><span>ചെറിയ പരിക്ക് ആണെങ്കിലും റിപ്പോർട്ട് ചെയ്യുക.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 5 ============ -->
+<section class="slide divider" data-title="മൊഡ്യൂൾ 5: പ്രായോഗിക സെഷൻ">
+  <div class="num">5</div>
+  <h2>പ്രായോഗിക പ്രദർശനം, വിലയിരുത്തൽ, ചോദ്യങ്ങൾ</h2>
+  <p>കൈ ശുചിത്വ നൈപുണ്യ പരിശോധന. സ്പിൽ കിറ്റ് റോൾ-പ്ലേ. നിറ കോഡ് സ്പോട്ടറും ക്വിസും.</p>
+  <p class="when">20 മിനിറ്റ്</p>
+</section>
+
+<section class="slide" data-title="5.1 കൈ ശുചിത്വ നൈപുണ്യ പരിശോധന">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 5 · നൈപുണ്യ പരിശോധന 1</span><span>ജോഡികളായി: ഒരാൾ ചെയ്യുന്നു, ഒരാൾ നിരീക്ഷിക്കുന്നു</span></div>
+  <h2>നൈപുണ്യ പരിശോധന 1: കൈ ശുചിത്വം</h2>
+  <div class="body dense">
+    <div class="cols">
+      <div class="box">
+        <h3>നിരീക്ഷകന്റെ ചെക്ക്‌ലിസ്റ്റ്</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="hh0"><span>മോതിരമോ വാച്ചോ ഇല്ല. നഖം ചെറുത്.</span></label></li>
+          <li><label><input type="checkbox" id="hh1"><span>ഘട്ടം 1: ഉള്ളംകൈ തമ്മിൽ</span></label></li>
+          <li><label><input type="checkbox" id="hh2"><span>ഘട്ടം 2: കൈയുടെ പുറത്ത്, വിരൽ കോർത്ത്</span></label></li>
+          <li><label><input type="checkbox" id="hh3"><span>ഘട്ടം 3: ഉള്ളംകൈ തമ്മിൽ, വിരൽ കോർത്ത്</span></label></li>
+          <li><label><input type="checkbox" id="hh4"><span>ഘട്ടം 4: വിരലുകളുടെ പുറംഭാഗം ഉള്ളംകൈയിൽ</span></label></li>
+          <li><label><input type="checkbox" id="hh5"><span>ഘട്ടം 5: തള്ളവിരൽ, വട്ടത്തിൽ</span></label></li>
+          <li><label><input type="checkbox" id="hh6"><span>ഘട്ടം 6: വിരൽത്തുമ്പ് ഉള്ളംകൈയിൽ, വട്ടത്തിൽ</span></label></li>
+          <li><label><input type="checkbox" id="hh7"><span>ശരിയായ സമയം: റബ് 20–30 സെ., കഴുകൽ 40–60 സെ.</span></label></li>
+        </ul>
+      </div>
+      <ul class="rules">
+        <li class="do"><span>ഹാൻഡ് റബ് കൊണ്ട് ആറ് ഘട്ടങ്ങളും ചെയ്യുക. നിരീക്ഷകൻ ഓരോ ഘട്ടവും ടിക്ക് ചെയ്യുന്നു.</span></li>
+        <li class="do"><span>റോൾ മാറി വീണ്ടും ചെയ്യുക.</span></li>
+        <li class="info"><span>പരിശീലകർക്ക്: കൈയിൽ അല്പം നിറമോ ഫ്ലൂറസെന്റ് ലോഷനോ പുരട്ടുക. പുരളാത്ത ഭാഗങ്ങൾ വിട്ടുപോയ ഇടങ്ങൾ കാണിക്കും: സാധാരണ തള്ളവിരൽ, വിരൽത്തുമ്പ്, കൈയുടെ പുറംഭാഗം.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="5.2 സ്പിൽ കിറ്റ് റോൾ-പ്ലേ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 5 · നൈപുണ്യ പരിശോധന 2</span><span>മൂന്ന് പേരുടെ ഗ്രൂപ്പ്: പ്രതികരിക്കുന്നയാൾ, സഹായി, നിരീക്ഷകൻ</span></div>
+  <h2>നൈപുണ്യ പരിശോധന 2: സ്പിൽ കിറ്റ് റോൾ-പ്ലേ</h2>
+  <div class="body dense">
+    <div class="scenario"><b class="label">സാഹചര്യം</b>വാർഡ് ഇടനാഴിയിൽ ഒരു രക്ത സാമ്പിൾ ട്യൂബ് പൊട്ടി. ഏകദേശം 30 ml രക്തവും കുറച്ച് ഗ്ലാസ് കഷണങ്ങളും തറയിലുണ്ട്. സമീപത്ത് രോഗികളുണ്ട്.</div>
+    <div class="cols">
+      <div class="box">
+        <h3>നിരീക്ഷകന്റെ ചെക്ക്‌ലിസ്റ്റ്</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="sp1"><span>സ്ഥലം അടച്ചു. ആളുകളെ അകറ്റി.</span></label></li>
+          <li><label><input type="checkbox" id="sp2"><span>സ്പിൽ കിറ്റ് എടുത്തു. ഗ്ലൗസ്, ഏപ്രൺ, മാസ്ക്, ഷൂ കവർ ധരിച്ചു.</span></label></li>
+          <li><label><input type="checkbox" id="sp3"><span>ഗ്ലാസ് ഫോർസെപ്സ് കൊണ്ട് പഞ്ചർ-പ്രൂഫ് പെട്ടിയിൽ ഇട്ടു.</span></label></li>
+          <li><label><input type="checkbox" id="sp4"><span>ആഗിരണ കടലാസ് കൊണ്ട് സ്പിൽ മൂടി.</span></label></li>
+          <li><label><input type="checkbox" id="sp5"><span>10% ഹൈപ്പോക്ലോറൈറ്റ് ഉപയോഗിച്ചു. 5 മിനിറ്റ് കാത്തിരുന്നു.</span></label></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>&nbsp;</h3>
+        <ul class="check">
+          <li><label><input type="checkbox" id="sp6"><span>മാലിന്യം മഞ്ഞ ബാഗിൽ ഇട്ടു.</span></label></li>
+          <li><label><input type="checkbox" id="sp7"><span>തുടച്ച് മോപ്പ് ചെയ്തു. തറ സ്വയം ഉണങ്ങാൻ വിട്ടു.</span></label></li>
+          <li><label><input type="checkbox" id="sp8"><span>PPE ശരിയായ ക്രമത്തിൽ ഊരി. കൈ വൃത്തിയാക്കി.</span></label></li>
+          <li><label><input type="checkbox" id="sp9"><span>സൂപ്പർവൈസറെ അറിയിച്ചു. സ്പിൽ കിറ്റ് വീണ്ടും നിറച്ചു.</span></label></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="5.3 നിറ കോഡ് സ്പോട്ടർ">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 5 · സ്പോട്ടർ</span><span>യഥാർത്ഥ വസ്തു കാണിക്കുക. ചോദിക്കുക: ഏത് ബിൻ? പിന്നെ ഉത്തരം കാണിക്കുക.</span></div>
+  <h2>സ്പോട്ടർ: ഏത് ബിൻ?</h2>
+  <div class="body">
+    <div class="spot">
+      <div class="q"><p class="item">സൂചി ഉറപ്പിച്ച ഉപയോഗിച്ച സിറിഞ്ച്</p><button type="button" id="sp-a">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag w">വെള്ള</span>ഷാർപ്സ് പെട്ടി</p></div>
+      <div class="q"><p class="item">പൊട്ടിയ ആംപ്യൂൾ</p><button type="button" id="sp-b">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag b">നീല</span>ഗ്ലാസ് പെട്ടി</p></div>
+      <div class="q"><p class="item">ഉപയോഗിച്ച IV സെറ്റ്</p><button type="button" id="sp-c">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag r">ചുവപ്പ്</span>ആദ്യം സൂചി മുറിക്കുക: സൂചി വെള്ളയിൽ</p></div>
+      <div class="q"><p class="item">രക്തം പുരണ്ട പഞ്ഞി</p><button type="button" id="sp-d">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag y">മഞ്ഞ</span>മലിന മാലിന്യം</p></div>
+      <div class="q"><p class="item">കാലാവധി കഴിഞ്ഞ ഗുളികകൾ</p><button type="button" id="sp-e">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag y">മഞ്ഞ</span>ഉപേക്ഷിച്ച മരുന്ന്</p></div>
+      <div class="q"><p class="item">യൂറിൻ ബാഗും കത്തീറ്ററും</p><button type="button" id="sp-f">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag r">ചുവപ്പ്</span>മലിനമായ പ്ലാസ്റ്റിക്</p></div>
+      <div class="q"><p class="item">ഉപയോഗിച്ച സ്കാൽപൽ ബ്ലേഡ്</p><button type="button" id="sp-g">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag w">വെള്ള</span>ഷാർപ്സ് പെട്ടി</p></div>
+      <div class="q"><p class="item">മറുപിള്ള (പ്ലാസന്റ)</p><button type="button" id="sp-h">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag y">മഞ്ഞ</span>ശരീരഭാഗ മാലിന്യം</p></div>
+      <div class="q"><p class="item">ഒഴിഞ്ഞ ഗ്ലാസ് മരുന്ന് വയൽ</p><button type="button" id="sp-i">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag b">നീല</span>ഗ്ലാസ് പെട്ടി</p></div>
+      <div class="q"><p class="item">ഉപയോഗിച്ച എക്സാമിനേഷൻ ഗ്ലൗസ്</p><button type="button" id="sp-j">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag r">ചുവപ്പ്</span>മലിനമായ പ്ലാസ്റ്റിക്</p></div>
+      <div class="q"><p class="item">ബാക്കി വന്ന ഭക്ഷണം</p><button type="button" id="sp-k">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag g">പച്ച</span>സാധാരണ, ജൈവ മാലിന്യം</p></div>
+      <div class="q"><p class="item">വൃത്തിയുള്ള പാക്കിംഗ് കടലാസ്</p><button type="button" id="sp-l">ഉത്തരം കാണുക</button><p class="ans" hidden><span class="tag g">കറുപ്പ് / പച്ച</span>സാധാരണ മാലിന്യം</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="5.4 ക്വിസ്">
+  <div class="eyebrow"><span class="part">മൊഡ്യൂൾ 5 · ക്വിസ്</span><span>ഓരോ ചോദ്യവും ചർച്ച ചെയ്ത ശേഷം ഉത്തരം കാണിക്കുക</span></div>
+  <h2>ചെറിയ ക്വിസ്</h2>
+  <div class="body">
+    <div class="quiz">
+      <div class="q"><b class="n">ചോദ്യം 1</b><p>വലിയ രക്ത സ്പില്ലിന് ഏത് വീര്യമുള്ള ഹൈപ്പോക്ലോറൈറ്റ്?</p><button type="button" id="q1">ഉത്തരം കാണുക</button><p class="ans" hidden>10% (5000 ppm). 5 മിനിറ്റ് കാത്തിരിക്കുക.</p></div>
+      <div class="q"><b class="n">ചോദ്യം 2</b><p>മൂന്ന് ബക്കറ്റുകൾ ഏതെല്ലാം, ഏത് ക്രമത്തിൽ?</p><button type="button" id="q2">ഉത്തരം കാണുക</button><p class="ans" hidden>ഡിറ്റർജന്റ് വെള്ളം, ശുദ്ധജലം (കഴുകാൻ), അണുനാശിനി.</p></div>
+      <div class="q"><b class="n">ചോദ്യം 3</b><p>സൂചി വിരലിൽ കുത്തി. ആദ്യം എന്ത് ചെയ്യണം?</p><button type="button" id="q3">ഉത്തരം കാണുക</button><p class="ans" hidden>ഒഴുകുന്ന വെള്ളവും സോപ്പും കൊണ്ട് കഴുകുക. ഞെക്കരുത്, ഉരയ്ക്കരുത്. പിന്നെ അറിയിക്കുക.</p></div>
+      <div class="q"><b class="n">ചോദ്യം 4</b><p>മുറി ഏത് ദിശയിൽ വൃത്തിയാക്കണം?</p><button type="button" id="q4">ഉത്തരം കാണുക</button><p class="ans" hidden>മുകളിൽ നിന്ന് താഴേക്ക്, വൃത്തിയുള്ളതിൽ നിന്ന് അഴുക്കിലേക്ക്, അകത്തു നിന്ന് വാതിലിലേക്ക്.</p></div>
+      <div class="q"><b class="n">ചോദ്യം 5</b><p>മാലിന്യ ബാഗ് എപ്പോൾ മാറ്റണം?</p><button type="button" id="q5">ഉത്തരം കാണുക</button><p class="ans" hidden>3/4 നിറയുമ്പോൾ.</p></div>
+      <div class="q"><b class="n">ചോദ്യം 6</b><p>PPE-യിൽ ആദ്യം ഊരേണ്ടത് ഏത്?</p><button type="button" id="q6">ഉത്തരം കാണുക</button><p class="ans" hidden>ഗ്ലൗസ്. അവസാനം കൈ വൃത്തിയാക്കുക.</p></div>
+      <div class="q"><b class="n">ചോദ്യം 7</b><p>ICU-വിലെ മോപ്പ് ഇടനാഴിയിൽ ഉപയോഗിക്കാമോ?</p><button type="button" id="q7">ഉത്തരം കാണുക</button><p class="ans" hidden>ഇല്ല. ക്രിട്ടിക്കൽ ഏരിയയ്ക്കും ജനറൽ ഏരിയയ്ക്കും വെവ്വേറെ മോപ്പ്.</p></div>
+      <div class="q"><b class="n">ചോദ്യം 8</b><p>HIV PEP എത്ര മണിക്കൂറിനുള്ളിൽ തുടങ്ങുന്നതാണ് ഏറ്റവും നല്ലത്?</p><button type="button" id="q8">ഉത്തരം കാണുക</button><p class="ans" hidden>2 മണിക്കൂറിനുള്ളിൽ. 72 മണിക്കൂറിനു ശേഷം ഫലിക്കില്ല.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="ഓർക്കേണ്ട പത്ത് കല്പനകൾ">
+  <div class="eyebrow"><span class="part">സംഗ്രഹം</span><span>ചോദ്യോത്തരം</span></div>
+  <h2>ഓർക്കേണ്ട പത്ത് കല്പനകൾ</h2>
+  <div class="body dense">
+    <div class="cols">
+      <ol class="steps">
+        <li><span>അഞ്ച് നിമിഷങ്ങളിലും കൈ വൃത്തിയാക്കുക. ആറ് ഘട്ടങ്ങളും പാലിക്കുക.</span></li>
+        <li><span>മുകളിൽ നിന്ന് താഴേക്ക്, വൃത്തിയുള്ളതിൽ നിന്ന് അഴുക്കിലേക്ക്, അകത്തു നിന്ന് പുറത്തേക്ക്.</span></li>
+        <li><span>മൂന്ന് ബക്കറ്റ് രീതി ഉപയോഗിക്കുക. രോഗീ സ്ഥലങ്ങളിൽ ചൂൽ പാടില്ല.</span></li>
+        <li><span>ബ്ലീച്ച് അളന്ന് ചേർക്കുക. പ്രതലങ്ങൾക്ക് 1%, വലിയ സ്പില്ലിന് 10%.</span></li>
+        <li><span>മോപ്പ് ദിവസവും കഴുകി, അണുവിമുക്തമാക്കി, ഉണക്കുക.</span></li>
+      </ol>
+      <ol class="steps" style="counter-reset:s 5">
+        <li><span>ഉറവിടത്തിൽ വേർതിരിക്കുക: മഞ്ഞ, ചുവപ്പ്, നീല, വെള്ള, കറുപ്പ് / പച്ച.</span></li>
+        <li><span>ബാഗ് 3/4 നിറയുമ്പോൾ മാറ്റുക. കെട്ടി, ലേബലും ബാർകോഡും ഒട്ടിക്കുക.</span></li>
+        <li><span>വലിയ സ്പിൽ: മൂടുക, 10% ഒഴിക്കുക, 5 മിനിറ്റ് കാത്തിരിക്കുക.</span></li>
+        <li><span>രണ്ട് കൈ കൊണ്ട് സൂചി ഒരിക്കലും റീക്യാപ് ചെയ്യരുത്.</span></li>
+        <li><span>സൂചി പരിക്ക്: കഴുകുക, അറിയിക്കുക, 2 മണിക്കൂറിനുള്ളിൽ ഡോക്ടറെ കാണുക.</span></li>
+      </ol>
+    </div>
+    <div class="callout info"><svg class="sg"><use href="#sg-info"/></svg><span>ഒരു നിയമത്തെക്കുറിച്ച് സംശയമുണ്ടെങ്കിൽ നിർത്തി സൂപ്പർവൈസറോടോ ഇൻഫെക്ഷൻ കൺട്രോൾ നഴ്സിനോടോ ചോദിക്കുക.</span></div>
+  </div>
+</section>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+</main>
+</div>
+
+<nav class="bar" aria-label="സ്ലൈഡ് നിയന്ത്രണം">
+  <a class="home" href="index.html">← ഹോം</a>
+  <button type="button" id="prev" aria-label="മുൻ സ്ലൈഡ്">← പിന്നോട്ട്</button>
+  <span class="count" id="count">1 / 41</span>
+  <button type="button" id="next" aria-label="അടുത്ത സ്ലൈഡ്">അടുത്തത് →</button>
+  <button type="button" id="ovBtn">എല്ലാ സ്ലൈഡുകളും</button>
+  <button type="button" id="fsBtn">ഫുൾ സ്ക്രീൻ</button>
+</nav>
+</div>
+
+<div class="overview" id="overview" lang="ml" hidden>
+  <header><h2>എല്ലാ സ്ലൈഡുകളും</h2><button type="button" id="ovClose">അടയ്ക്കുക</button></header>
+  <ol id="ovList"></ol>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  // Add a sign to each rule line from its class.
+  document.querySelectorAll('ul.rules > li').forEach(function(li){
+    var t=['do','dont','warn','info'].find(function(c){return li.classList.contains(c)})||'do';
+    var svg=document.createElementNS(NS,'svg'); svg.setAttribute('class','sg'); svg.setAttribute('aria-hidden','true');
+    var use=document.createElementNS(NS,'use'); use.setAttribute('href','#sg-'+t); svg.appendChild(use);
+    li.insertBefore(svg,li.firstChild);
+    var sr=document.createElement('span'); sr.className='sr';
+    sr.textContent={do:'ചെയ്യുക: ',dont:'ചെയ്യരുത്: ',warn:'മുന്നറിയിപ്പ്: ',info:'വിവരം: '}[t];
+    li.querySelector('span').prepend(sr);
+  });
+
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var count=document.getElementById('count'), prog=document.getElementById('progress');
+  var cur=0, N=slides.length;
+  function show(i){
+    cur=Math.max(0,Math.min(N-1,i));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+    count.textContent=(cur+1)+' / '+N;
+    prog.style.width=((cur+1)/N*100)+'%';
+    try{history.replaceState(null,'','#s'+(cur+1))}catch(e){}
+  }
+  var m=/^#s(\d+)$/.exec(location.hash||'');
+  show(m?parseInt(m[1],10)-1:0);
+
+  document.getElementById('prev').onclick=function(){show(cur-1)};
+  document.getElementById('next').onclick=function(){show(cur+1)};
+
+  var ov=document.getElementById('overview'), ovList=document.getElementById('ovList');
+  slides.forEach(function(s,k){
+    var li=document.createElement('li'), b=document.createElement('button'); b.type='button';
+    var n=document.createElement('b'); n.textContent=k+1; b.appendChild(n);
+    b.appendChild(document.createTextNode(s.getAttribute('data-title')||''));
+    b.onclick=function(){ov.hidden=true; show(k)};
+    li.appendChild(b); ovList.appendChild(li);
+  });
+  document.getElementById('ovBtn').onclick=function(){ov.hidden=false; ovList.querySelectorAll('button')[cur].focus()};
+  document.getElementById('ovClose').onclick=function(){ov.hidden=true};
+
+  document.getElementById('fsBtn').onclick=function(){
+    try{
+      if(document.fullscreenElement){document.exitFullscreen().catch(function(){})}
+      else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().catch(function(){})}
+    }catch(e){}
+  };
+
+  document.addEventListener('keydown',function(e){
+    if(!ov.hidden){ if(e.key==='Escape') ov.hidden=true; return; }
+    if(e.target && (e.target.tagName==='BUTTON'||e.target.tagName==='INPUT') && (e.key===' '||e.key==='Enter')) return;
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>-1){e.preventDefault(); show(cur+1)}
+    else if(['ArrowLeft','PageUp'].indexOf(e.key)>-1){e.preventDefault(); show(cur-1)}
+    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(N-1)}
+  });
+
+  var sx=null;
+  var stage=document.getElementById('stage');
+  stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+  stage.addEventListener('touchend',function(e){
+    if(sx===null) return; var dx=e.changedTouches[0].clientX-sx; sx=null;
+    if(window.matchMedia('(max-width:760px)').matches) return;
+    if(Math.abs(dx)>50) show(cur+(dx<0?1:-1));
+  });
+
+  document.querySelectorAll('.q button').forEach(function(b){
+    b.onclick=function(){
+      var a=b.nextElementSibling; a.hidden=!a.hidden;
+      b.textContent=a.hidden?'ഉത്തരം കാണുക':'ഉത്തരം മറയ്ക്കുക';
+    };
+  });
+})();
+</script>
+
+</body>
+</html>
